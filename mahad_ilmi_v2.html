@@ -1,0 +1,2241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mahad Ilmi — Sistem Terintegrasi</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    :root {
+      --green-50:#f0fdf4;--green-100:#dcfce7;--green-200:#bbf7d0;--green-300:#86efac;
+      --green-400:#4ade80;--green-500:#22c55e;--green-600:#16a34a;--green-700:#15803d;
+      --green-800:#166534;--green-900:#14532d;--green-950:#052e16;
+      --gold:#c8973a;--gold-light:#e8b84b;--gold-dark:#a87c2c;--gold-50:#fef9ec;
+      --red-50:#fef2f2;--red-100:#fee2e2;--red-500:#ef4444;--red-600:#dc2626;--red-700:#b91c1c;
+      --amber-50:#fffbeb;--amber-400:#fbbf24;--amber-500:#f59e0b;--amber-600:#d97706;
+      --blue-50:#eff6ff;--blue-100:#dbeafe;--blue-500:#3b82f6;--blue-600:#2563eb;
+      --gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-200:#e2e8f0;--gray-300:#cbd5e1;
+      --gray-400:#94a3b8;--gray-500:#64748b;--gray-600:#475569;--gray-700:#334155;
+      --gray-800:#1e293b;--gray-900:#0f172a;
+      --sidebar-w:272px;--topbar-h:68px;
+      --radius-sm:8px;--radius:12px;--radius-lg:16px;--radius-xl:20px;--radius-2xl:24px;
+      --shadow-sm:0 1px 2px rgba(0,0,0,.06);
+      --shadow:0 4px 12px rgba(0,0,0,.08);
+      --shadow-lg:0 10px 30px rgba(0,0,0,.12);
+      --shadow-xl:0 20px 50px rgba(0,0,0,.18);
+      --transition:all .2s cubic-bezier(.4,0,.2,1);
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--gray-50);color:var(--gray-800);overflow-x:hidden}
+    ::-webkit-scrollbar{width:6px;height:6px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:99px}
+    ::-webkit-scrollbar-thumb:hover{background:var(--gray-400)}
+
+    /* ===================== LOGIN PAGE ===================== */
+    .login-page{
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,#052e16 0%,#14532d 50%,#1e4620 100%);
+      padding:2rem;position:relative;overflow:hidden;
+    }
+    .login-page::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse 80% 60% at 70% 50%,rgba(200,151,58,.15),transparent),
+                 radial-gradient(ellipse 60% 80% at 10% 80%,rgba(22,163,74,.1),transparent);
+    }
+    .login-page::after{
+      content:'بِسْمِ اللَّهِ';font-family:'Amiri',serif;font-size:8rem;color:rgba(255,255,255,.03);
+      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:none;
+    }
+    .login-box{
+      position:relative;z-index:1;background:rgba(255,255,255,.97);border-radius:32px;
+      overflow:hidden;box-shadow:var(--shadow-xl),0 0 0 1px rgba(255,255,255,.1);
+      max-width:620px;width:100%;display:flex;flex-direction:column;
+    }
+    .login-right{padding:3.5rem 4rem;display:flex;flex-direction:column;justify-content:center}
+    .login-left{display:none}
+    .login-left::before{
+      content:'م';font-family:'Amiri',serif;font-size:22rem;color:rgba(255,255,255,.04);
+      position:absolute;right:-3rem;bottom:-5rem;line-height:1;
+    }
+    .login-badge{
+      display:inline-flex;align-items:center;gap:.5rem;
+      background:rgba(200,151,58,.2);border:1px solid rgba(200,151,58,.4);
+      color:var(--gold-light);padding:.4rem 1rem;border-radius:99px;font-size:.8rem;font-weight:600;
+      margin-bottom:1.5rem;width:fit-content;
+    }
+    .login-left h1{font-family:'Amiri',serif;font-size:3rem;font-weight:700;line-height:1.15;margin-bottom:1rem;letter-spacing:-.01em}
+    .login-left .subtitle{font-size:.9rem;line-height:1.7;opacity:.8;margin-bottom:2rem;max-width:360px}
+    .login-feature{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;font-size:.875rem;opacity:.9}
+    .login-feature .ico{width:28px;height:28px;border-radius:8px;background:rgba(200,151,58,.25);
+      display:flex;align-items:center;justify-content:center;color:var(--gold-light);font-size:.75rem;flex-shrink:0}
+    .login-right h2{font-size:2rem;font-weight:800;color:var(--gray-900);margin-bottom:.625rem}
+    .login-right .lead{font-size:1rem;color:var(--gray-500);margin-bottom:2.25rem}
+    .role-grid{display:flex;flex-direction:column;gap:1rem;margin-bottom:2rem}
+    .role-btn{display:flex;align-items:center;gap:1.25rem;text-align:left;
+      background:var(--gray-50);border:2px solid var(--gray-200);border-radius:var(--radius-lg);
+      padding:1.75rem 1.5rem;cursor:pointer;transition:var(--transition);
+    }
+    .role-btn:hover{border-color:var(--green-400);background:var(--green-50);transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+    .role-btn.ortu-btn:hover{border-color:var(--gold);background:var(--gold-50)}
+    .role-btn .r-icon{flex-shrink:0;
+      width:64px;height:64px;border-radius:16px;
+      display:flex;align-items:center;justify-content:center;font-size:1.75rem;
+    }
+    .role-btn.admin-btn .r-icon{background:var(--green-100);color:var(--green-700)}
+    .role-btn.ortu-btn .r-icon{background:#fef3c7;color:var(--gold-dark)}
+    .role-btn h3{font-size:1.125rem;font-weight:700;margin-bottom:.375rem;color:var(--gray-800)}
+    .role-btn p{font-size:.875rem;color:var(--gray-500);line-height:1.4}
+    .login-form-area{animation:fadeUp .3s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .form-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem}
+    .form-back{width:34px;height:34px;border-radius:9px;background:var(--gray-100);border:none;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;color:var(--gray-500);transition:var(--transition)}
+    .form-back:hover{background:var(--gray-200);color:var(--gray-700)}
+    .form-header h3{font-size:1.125rem;font-weight:700;color:var(--gray-800)}
+    .login-err{background:var(--red-50);border:1px solid #fca5a5;color:var(--red-700);
+      padding:.75rem 1rem;border-radius:var(--radius);font-size:.85rem;margin-top:1rem;display:none;
+      animation:fadeUp .2s ease}
+
+    /* ===================== LAYOUT ===================== */
+    .app{display:flex;min-height:100vh}
+    .sidebar{
+      width:var(--sidebar-w);background:white;border-right:1px solid var(--gray-200);
+      position:fixed;height:100vh;overflow-y:auto;z-index:50;display:flex;flex-direction:column;
+      transition:transform .3s ease;
+    }
+    .sb-logo{padding:1.25rem 1.5rem;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;gap:.875rem}
+    .sb-logo-mark{
+      width:42px;height:42px;border-radius:11px;
+      background:linear-gradient(135deg,var(--green-700),var(--green-900));
+      display:flex;align-items:center;justify-content:center;color:white;
+      font-family:'Amiri',serif;font-size:1.5rem;font-weight:700;box-shadow:var(--shadow);flex-shrink:0;
+    }
+    .sb-logo-text h3{font-size:1rem;font-weight:800;color:var(--gray-900);line-height:1.2}
+    .sb-logo-text p{font-size:.72rem;color:var(--gray-400);font-weight:500}
+    .sb-user{padding:1.25rem 1.5rem;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;gap:.875rem}
+    .sb-avatar{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1rem;flex-shrink:0}
+    .sb-avatar.admin{background:linear-gradient(135deg,var(--green-600),var(--green-800))}
+    .sb-avatar.ortu{background:linear-gradient(135deg,var(--gold),var(--gold-dark))}
+    .sb-uname{font-size:.9rem;font-weight:700;color:var(--gray-800);line-height:1.3}
+    .sb-urole{font-size:.72rem;color:var(--gray-400);font-weight:500}
+    .sb-uchild{font-size:.75rem;color:var(--green-600);font-weight:600;margin-top:.15rem}
+    .sb-nav{padding:1rem 0;flex:1}
+    .sb-section-label{padding:.5rem 1.5rem;font-size:.65rem;font-weight:800;text-transform:uppercase;
+      letter-spacing:.08em;color:var(--gray-400);margin-top:.5rem}
+    .nav-item{
+      display:flex;align-items:center;gap:.75rem;padding:.65rem 1.5rem;
+      color:var(--gray-600);font-size:.875rem;font-weight:500;cursor:pointer;
+      transition:var(--transition);border-left:3px solid transparent;margin:.125rem 0;
+    }
+    .nav-item:hover{background:var(--gray-50);color:var(--green-700);border-left-color:var(--green-300)}
+    .nav-item.active{background:var(--green-50);color:var(--green-700);border-left-color:var(--green-600);font-weight:600}
+    .nav-item i{width:18px;font-size:1rem;text-align:center}
+    .nav-item span{flex:1}
+    .nav-badge{background:var(--red-500);color:white;font-size:.625rem;font-weight:700;padding:.1rem .45rem;border-radius:99px}
+    .sb-bottom{padding:1.25rem 1.5rem;border-top:1px solid var(--gray-200)}
+    .sb-logout{
+      display:flex;align-items:center;gap:.75rem;padding:.65rem 1rem;border-radius:var(--radius);
+      background:var(--red-50);color:var(--red-600);font-size:.875rem;font-weight:600;cursor:pointer;
+      transition:var(--transition);border:1px solid transparent;
+    }
+    .sb-logout:hover{background:var(--red-100);border-color:#fca5a5}
+    .main{flex:1;margin-left:var(--sidebar-w);min-height:100vh;display:flex;flex-direction:column}
+    .topbar{
+      height:var(--topbar-h);background:rgba(255,255,255,.95);border-bottom:1px solid var(--gray-200);
+      backdrop-filter:blur(8px);padding:0 2rem;display:flex;align-items:center;
+      justify-content:space-between;position:sticky;top:0;z-index:40;
+    }
+    .tb-title h2{font-size:1.375rem;font-weight:800;color:var(--gray-900)}
+    .tb-title p{font-size:.8rem;color:var(--gray-400);margin-top:.1rem}
+    .tb-actions{display:flex;align-items:center;gap:.75rem}
+    .tb-search{
+      display:flex;align-items:center;gap:.5rem;background:var(--gray-100);
+      padding:.5rem 1rem;border-radius:var(--radius);border:1.5px solid transparent;transition:var(--transition);
+    }
+    .tb-search:focus-within{background:white;border-color:var(--green-400);box-shadow:0 0 0 3px var(--green-100)}
+    .tb-search i{color:var(--gray-400);font-size:.875rem}
+    .tb-search input{border:none;background:transparent;outline:none;font-size:.875rem;width:220px;color:var(--gray-700);font-family:inherit}
+    .tb-search input::placeholder{color:var(--gray-400)}
+    .tb-notif{
+      position:relative;width:38px;height:38px;border-radius:var(--radius);background:var(--gray-100);
+      border:1.5px solid var(--gray-200);display:flex;align-items:center;justify-content:center;
+      color:var(--gray-500);cursor:pointer;transition:var(--transition);
+    }
+    .tb-notif:hover{background:var(--gray-200);color:var(--gray-800)}
+    .notif-dot{position:absolute;top:-4px;right:-4px;width:18px;height:18px;background:var(--red-500);
+      border:2px solid white;border-radius:50%;font-size:.625rem;color:white;font-weight:700;
+      display:flex;align-items:center;justify-content:center}
+    .tb-user{display:flex;align-items:center;gap:.5rem;padding:.375rem .75rem .375rem .5rem;
+      background:var(--gray-100);border-radius:99px;border:1.5px solid var(--gray-200);cursor:pointer;transition:var(--transition)}
+    .tb-user:hover{background:var(--gray-200)}
+    .tb-ua{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:white}
+    .tb-ua.admin{background:linear-gradient(135deg,var(--green-600),var(--green-800))}
+    .tb-ua.ortu{background:linear-gradient(135deg,var(--gold),var(--gold-dark))}
+    .tb-uname{font-size:.85rem;font-weight:600;color:var(--gray-700)}
+    .content{padding:2rem;flex:1}
+
+    /* ===================== CARDS ===================== */
+    .card{background:white;border-radius:var(--radius-xl);border:1px solid var(--gray-200);padding:1.5rem;box-shadow:var(--shadow-sm)}
+    .card:hover{box-shadow:var(--shadow)}
+    .card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem}
+    .card-title{font-size:1rem;font-weight:700;color:var(--gray-900)}
+    .card-subtitle{font-size:.8rem;color:var(--gray-400);margin-top:.25rem}
+    .card-link{font-size:.8rem;font-weight:600;color:var(--green-600);cursor:pointer;white-space:nowrap}
+    .card-link:hover{color:var(--green-700)}
+
+    .stats-grid{display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem}
+    .stat-card{
+      background:white;border-radius:var(--radius-xl);padding:1.25rem 1.5rem;
+      border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);transition:var(--transition);
+      display:flex;align-items:center;gap:1.25rem;
+    }
+    .stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+    .stat-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.375rem;flex-shrink:0}
+    .stat-body{flex:1}
+    .stat-value{font-size:2rem;font-weight:800;color:var(--gray-900);line-height:1}
+    .stat-label{font-size:.8rem;color:var(--gray-400);font-weight:500;margin-top:.375rem}
+    .stat-delta{font-size:.72rem;font-weight:600;padding:.2rem .6rem;border-radius:99px;margin-top:.5rem;display:inline-block}
+    .delta-up{background:var(--green-100);color:var(--green-700)}
+    .delta-down{background:var(--red-50);color:var(--red-600)}
+    .delta-neutral{background:var(--gray-100);color:var(--gray-500)}
+
+    .g2{display:flex;flex-direction:column;gap:1.25rem;margin-bottom:1.25rem}
+    .g3{display:flex;flex-direction:column;gap:1.25rem;margin-bottom:1.25rem}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+
+    /* ===================== TABLE ===================== */
+    .table-wrap{overflow-x:auto;border-radius:var(--radius-lg)}
+    table{width:100%;border-collapse:collapse}
+    th{padding:.875rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+      color:var(--gray-500);background:var(--gray-50);border-bottom:1px solid var(--gray-200);text-align:left;white-space:nowrap}
+    td{padding:.875rem 1rem;font-size:.875rem;color:var(--gray-700);border-bottom:1px solid var(--gray-100)}
+    tr:last-child td{border-bottom:none}
+    tbody tr:hover td{background:var(--gray-50)}
+    .td-name{font-weight:600;color:var(--gray-900)}
+    .td-sub{font-size:.72rem;color:var(--gray-400);margin-top:.2rem}
+
+    /* ===================== BADGES ===================== */
+    .badge{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .75rem;border-radius:99px;font-size:.72rem;font-weight:600;line-height:1.5}
+    .b-green{background:var(--green-100);color:var(--green-700)}
+    .b-yellow{background:var(--amber-50);color:var(--amber-600)}
+    .b-red{background:var(--red-50);color:var(--red-600)}
+    .b-blue{background:var(--blue-50);color:var(--blue-600)}
+    .b-gold{background:#fef3c7;color:var(--gold-dark)}
+    .b-gray{background:var(--gray-100);color:var(--gray-600)}
+
+    /* ===================== BUTTONS ===================== */
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+      padding:.6rem 1.25rem;border-radius:var(--radius);font-size:.875rem;font-weight:600;
+      border:none;cursor:pointer;transition:var(--transition);font-family:inherit}
+    .btn-primary{background:var(--green-600);color:white}
+    .btn-primary:hover{background:var(--green-700);transform:translateY(-1px);box-shadow:0 4px 12px rgba(22,163,74,.3)}
+    .btn-danger{background:var(--red-600);color:white}
+    .btn-danger:hover{background:var(--red-700);transform:translateY(-1px)}
+    .btn-gold{background:var(--gold);color:white}
+    .btn-gold:hover{background:var(--gold-dark);transform:translateY(-1px)}
+    .btn-outline{background:transparent;border:1.5px solid var(--gray-200);color:var(--gray-600)}
+    .btn-outline:hover{background:var(--gray-50);border-color:var(--gray-300)}
+    .btn-ghost{background:transparent;color:var(--gray-500);padding:.4rem .75rem}
+    .btn-ghost:hover{background:var(--gray-100);color:var(--gray-700)}
+    .btn-sm{padding:.4rem .875rem;font-size:.8rem;border-radius:var(--radius-sm)}
+    .btn-lg{padding:.75rem 1.75rem;font-size:.9375rem}
+    .btn-block{width:100%}
+    .btn-icon{width:34px;height:34px;padding:0;border-radius:var(--radius-sm)}
+    .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+    /* ===================== FORMS ===================== */
+    .fg{margin-bottom:1.125rem}
+    .fg label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-500);margin-bottom:.5rem}
+    .fg input,.fg select,.fg textarea{
+      width:100%;padding:.7rem 1rem;border:1.5px solid var(--gray-200);border-radius:var(--radius);
+      font-size:.875rem;font-family:inherit;background:white;color:var(--gray-800);transition:var(--transition);
+    }
+    .fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--green-500);box-shadow:0 0 0 3px var(--green-100)}
+    .fg select{cursor:pointer}
+    .fg .hint{font-size:.72rem;color:var(--gray-400);margin-top:.375rem}
+    .fg input[readonly]{background:var(--gray-50);color:var(--gray-500)}
+
+    /* ===================== MODAL ===================== */
+    .modal-overlay{
+      position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(6px);
+      display:none;align-items:center;justify-content:center;z-index:999;padding:1.5rem;
+    }
+    .modal-overlay.active{display:flex}
+    .modal-box{
+      background:white;border-radius:var(--radius-2xl);padding:2rem;width:100%;
+      max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-xl);
+      animation:modalIn .25s cubic-bezier(.4,0,.2,1);
+    }
+    .modal-box.modal-lg{max-width:720px}
+    @keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+    .modal-head h3{font-size:1.125rem;font-weight:700;color:var(--gray-900)}
+    .modal-close{width:30px;height:30px;border-radius:7px;background:var(--gray-100);border:none;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;color:var(--gray-400);transition:var(--transition)}
+    .modal-close:hover{background:var(--gray-200);color:var(--gray-600)}
+    .modal-footer{display:flex;gap:.75rem;margin-top:1.5rem}
+
+    /* ===================== TOAST ===================== */
+    .toast-wrap{position:fixed;bottom:2rem;right:2rem;z-index:9999;display:flex;flex-direction:column;gap:.625rem}
+    .toast{
+      background:white;border-radius:var(--radius-lg);padding:.875rem 1.25rem;
+      box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:.75rem;
+      border-left:4px solid;min-width:280px;animation:toastIn .3s ease;
+    }
+    .toast.t-success{border-left-color:var(--green-500)}
+    .toast.t-error{border-left-color:var(--red-600)}
+    .toast.t-warning{border-left-color:var(--amber-500)}
+    .toast.t-info{border-left-color:var(--blue-500)}
+    @keyframes toastIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+    .toast-icon{font-size:1.125rem}
+    .toast-msg{font-size:.875rem;font-weight:500;color:var(--gray-800);flex:1}
+
+    /* ===================== PROGRESS ===================== */
+    .progress-bar-wrap{height:6px;background:var(--gray-200);border-radius:99px;overflow:hidden}
+    .progress-bar-fill{height:100%;border-radius:99px;transition:width .4s ease}
+    .pb-green{background:var(--green-500)}
+    .pb-yellow{background:var(--amber-500)}
+    .pb-red{background:var(--red-500)}
+
+    /* ===================== QUICK ACTIONS ===================== */
+    .qa-grid{display:grid;grid-template-columns:1fr;gap:1rem;margin-bottom:1.5rem}
+    .qa-btn{
+      background:white;border:1.5px solid var(--gray-200);border-radius:var(--radius-lg);
+      padding:1.25rem 1rem;text-align:center;cursor:pointer;transition:var(--transition);
+    }
+    .qa-btn:hover{border-color:var(--green-300);background:var(--green-50);transform:translateY(-2px);box-shadow:var(--shadow)}
+    .qa-icon{font-size:1.75rem;margin-bottom:.625rem}
+    .qa-label{font-size:.8rem;font-weight:600;color:var(--gray-600)}
+
+    /* ===================== RANKING ===================== */
+    .rank-item{display:flex;align-items:center;gap:1rem;padding:.75rem 0;border-bottom:1px solid var(--gray-100)}
+    .rank-item:last-child{border-bottom:none}
+    .rank-num{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem}
+    .rn-1{background:#fef3c7;color:#b45309}
+    .rn-2{background:var(--gray-100);color:var(--gray-500)}
+    .rn-3{background:#fed7aa;color:#9a3412}
+    .rn-other{background:var(--gray-50);color:var(--gray-400)}
+    .rank-name{font-weight:600;font-size:.9rem;color:var(--gray-900)}
+    .rank-detail{font-size:.75rem;color:var(--gray-400)}
+    .rank-poin{font-size:1.125rem;font-weight:800;color:var(--green-700)}
+
+    /* ===================== PROFILE HEADER ===================== */
+    .profile-hero{
+      background:linear-gradient(135deg,var(--green-800),var(--green-950));
+      border-radius:var(--radius-xl);padding:2rem;color:white;margin-bottom:1.5rem;
+      display:flex;align-items:center;gap:1.75rem;position:relative;overflow:hidden;
+    }
+    .profile-hero::before{
+      content:'';position:absolute;right:-2rem;top:-2rem;
+      width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.04);
+    }
+    .profile-hero::after{
+      content:'';position:absolute;right:5rem;bottom:-4rem;
+      width:150px;height:150px;border-radius:50%;background:rgba(200,151,58,.1);
+    }
+    .ph-avatar{
+      width:90px;height:90px;border-radius:20px;background:var(--gold);
+      display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:700;
+      color:var(--green-950);flex-shrink:0;box-shadow:0 4px 16px rgba(0,0,0,.2);
+    }
+    .ph-info h1{font-size:1.75rem;font-weight:800;margin-bottom:.375rem}
+    .ph-info p{font-size:.875rem;opacity:.8;margin-bottom:1rem}
+    .ph-stats{display:flex;gap:1.5rem;flex-wrap:wrap}
+    .ph-stat .v{font-size:1.5rem;font-weight:800;color:var(--gold-light)}
+    .ph-stat .l{font-size:.72rem;opacity:.7}
+
+    /* ===================== TIMELINE ===================== */
+    .timeline{position:relative;padding-left:1.75rem}
+    .timeline::before{content:'';position:absolute;left:5px;top:0;bottom:0;width:2px;background:var(--gray-200)}
+    .tl-item{position:relative;padding-bottom:1.25rem}
+    .tl-dot{position:absolute;left:-1.75rem;top:.3rem;width:12px;height:12px;border-radius:50%;background:var(--green-500);border:2px solid white;box-shadow:0 0 0 2px var(--green-200)}
+    .tl-item.warn .tl-dot{background:var(--amber-500);box-shadow:0 0 0 2px #fef3c7}
+    .tl-item.danger .tl-dot{background:var(--red-500);box-shadow:0 0 0 2px var(--red-100)}
+    .tl-date{font-size:.72rem;color:var(--gray-400);margin-bottom:.3rem}
+    .tl-box{background:var(--gray-50);border-radius:var(--radius);padding:.875rem 1rem}
+    .tl-title{font-weight:600;font-size:.875rem;color:var(--gray-800);margin-bottom:.2rem}
+    .tl-desc{font-size:.8rem;color:var(--gray-500)}
+
+    /* ===================== ALERT ===================== */
+    .alert-bar{
+      background:linear-gradient(135deg,#fef2f2,#fee2e2);border:1px solid #fca5a5;
+      border-radius:var(--radius-lg);padding:1.125rem 1.25rem;margin-bottom:1.5rem;
+      display:flex;align-items:center;gap:1rem;
+    }
+    .alert-ico{width:42px;height:42px;background:var(--red-600);border-radius:11px;
+      display:flex;align-items:center;justify-content:center;color:white;font-size:1.125rem;flex-shrink:0}
+    .alert-body{flex:1}
+    .alert-title{font-weight:700;color:#991b1b;font-size:.9rem;margin-bottom:.25rem}
+    .alert-desc{font-size:.8rem;color:#b91c1c}
+    .alert-act{font-size:.8rem;font-weight:700;color:#991b1b;cursor:pointer;text-decoration:underline;white-space:nowrap}
+
+    /* ===================== KAMAR CARD ===================== */
+    .kamar-card{
+      background:white;border:1.5px solid var(--gray-200);border-radius:var(--radius-xl);
+      padding:1.375rem;cursor:pointer;transition:var(--transition);
+    }
+    .kamar-card:hover{border-color:var(--green-400);box-shadow:var(--shadow);transform:translateY(-2px)}
+    .kamar-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+    .kamar-title{font-size:1.125rem;font-weight:800;color:var(--gray-900)}
+    .kamar-members{font-size:.8rem;color:var(--gray-400);margin-top:.5rem}
+
+    /* ===================== CHART ===================== */
+    .chart-wrap{position:relative;height:280px}
+
+    /* ===================== AKUN ORTU ===================== */
+    .akun-card{
+      background:linear-gradient(135deg,var(--green-50),white);border:1.5px solid var(--green-200);
+      border-radius:var(--radius-xl);padding:1.5rem;
+    }
+    .akun-list-item{
+      display:flex;align-items:center;gap:1rem;padding:1rem;
+      background:white;border-radius:var(--radius-lg);border:1px solid var(--gray-200);
+      margin-bottom:.75rem;transition:var(--transition);
+    }
+    .akun-list-item:hover{border-color:var(--green-300);box-shadow:var(--shadow-sm)}
+    .akun-avatar{width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1rem;flex-shrink:0}
+    .akun-info{flex:1;min-width:0}
+    .akun-name{font-weight:700;font-size:.9rem;color:var(--gray-900)}
+    .akun-meta{font-size:.75rem;color:var(--gray-400);margin-top:.2rem}
+    .akun-actions{display:flex;gap:.5rem}
+    .code-badge{background:var(--gray-100);color:var(--gray-700);padding:.2rem .6rem;border-radius:6px;font-family:monospace;font-size:.8rem}
+
+    /* ===================== POIN INDICATOR ===================== */
+    .poin-bar-wrap{background:var(--gray-100);border-radius:99px;height:8px;overflow:hidden;margin-top:.5rem}
+    .poin-bar{height:100%;border-radius:99px;transition:width .5s ease}
+
+    /* ===================== SECTIONS ===================== */
+    .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem;flex-wrap:wrap;gap:1rem}
+    .page-title-block h2{font-size:1.375rem;font-weight:800;color:var(--gray-900)}
+    .page-title-block p{font-size:.85rem;color:var(--gray-400);margin-top:.25rem}
+
+    /* ===================== TOP 3 PODIUM ===================== */
+    .podium{display:grid;grid-template-columns:1fr;gap:1rem;margin-bottom:1.75rem}
+    .podium-card{background:white;border:1.5px solid var(--gray-200);border-radius:var(--radius-xl);padding:1.25rem 1.5rem;display:flex;align-items:center;gap:1.25rem;transition:var(--transition)}
+    .podium-card:hover{box-shadow:var(--shadow-lg)}
+    .podium-card.p1{background:linear-gradient(135deg,#fffbeb,#fef3c7);border-color:#fcd34d}
+    .podium-medal{font-size:2rem;flex-shrink:0}
+    .podium-poin{font-size:1.75rem;font-weight:900;color:var(--gray-900);margin-left:auto}
+    .podium-name{font-size:.9rem;font-weight:700;color:var(--gray-800)}
+    .podium-meta{font-size:.75rem;color:var(--gray-400);margin-top:.2rem}
+
+    /* ===================== LAPORAN CARDS ===================== */
+    .laporan-card{
+      background:white;border:1.5px solid var(--gray-200);border-radius:var(--radius-xl);
+      padding:1.5rem;display:flex;align-items:center;gap:1.25rem;transition:var(--transition);
+    }
+    .laporan-card:hover{border-color:var(--green-300);box-shadow:var(--shadow)}
+    .laporan-card-body{flex:1}
+    .laporan-card h3{font-size:.95rem;font-weight:700;margin-bottom:.25rem}
+    .laporan-card p{font-size:.8rem;color:var(--gray-400);margin-bottom:.875rem;line-height:1.5}
+    .laporan-icon{width:56px;height:56px;border-radius:14px;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+
+    /* ===================== RESPONSIVE ===================== */
+    @media(max-width:768px){
+      .sidebar{transform:translateX(-100%)}.main{margin-left:0}
+      .tb-search{display:none}
+    }
+
+    /* ===================== EMPTY STATE ===================== */
+    .empty{text-align:center;padding:3rem 1rem;color:var(--gray-400)}
+    .empty i{font-size:3rem;margin-bottom:1rem;opacity:.4}
+    .empty p{font-size:.9rem}
+
+    /* ===================== DIVIDER ===================== */
+    .divider{height:1px;background:var(--gray-200);margin:1.25rem 0}
+
+    /* ===================== SEARCH BAR IN CARD ===================== */
+    .inline-search{
+      display:flex;align-items:center;gap:.5rem;background:var(--gray-50);
+      padding:.5rem 1rem;border-radius:var(--radius);border:1.5px solid var(--gray-200);
+      transition:var(--transition);flex:1;max-width:320px;
+    }
+    .inline-search:focus-within{background:white;border-color:var(--green-400);box-shadow:0 0 0 3px var(--green-100)}
+    .inline-search i{color:var(--gray-400);font-size:.85rem}
+    .inline-search input{border:none;background:transparent;outline:none;font-size:.875rem;width:100%;font-family:inherit}
+  </style>
+</head>
+<body>
+
+<!-- ===================== LOGIN PAGE ===================== -->
+<div id="loginPage" class="login-page">
+  <div class="login-box">
+    <div class="login-left">
+      <span class="login-badge"><i class="fas fa-mosque"></i> Sistem Terintegrasi</span>
+      <h1>Mahad Ilmi<br>MAN 1 Kendari</h1>
+      <p class="subtitle">Platform manajemen asrama digital yang menghubungkan admin dan orang tua dalam satu sistem terpadu. Pantau perkembangan santri secara real-time.</p>
+      <div class="login-feature"><div class="ico"><i class="fas fa-bolt"></i></div> Data real-time sinkron otomatis</div>
+      <div class="login-feature"><div class="ico"><i class="fas fa-bell"></i></div> Notifikasi langsung ke orang tua</div>
+      <div class="login-feature"><div class="ico"><i class="fas fa-shield-alt"></i></div> Kontrol penuh di tangan admin</div>
+      <div class="login-feature"><div class="ico"><i class="fas fa-chart-line"></i></div> Laporan & statistik lengkap</div>
+    </div>
+    <div class="login-right">
+      <div style="text-align:center;margin-bottom:2rem">
+        <div style="width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--green-600),var(--green-900));display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-family:'Amiri',serif;font-size:2rem;color:var(--gold-light);box-shadow:0 8px 24px rgba(21,128,61,.3)">م</div>
+        <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green-700);margin-bottom:.25rem">Mahad Ilmi · MAN 1 Kendari</div>
+        <div style="font-size:.8rem;color:var(--gray-400)">Sistem Manajemen Asrama Terintegrasi</div>
+      </div>
+      <h2>Selamat Datang 👋</h2>
+      <p class="lead">Pilih portal akses Anda</p>
+
+      <!-- Role Selector -->
+      <div id="roleView">
+        <div class="role-grid">
+          <div class="role-btn admin-btn" onclick="showLoginForm('admin')">
+            <div class="r-icon"><i class="fas fa-user-shield"></i></div>
+            <h3>Admin</h3>
+            <p>Kelola seluruh data asrama</p>
+          </div>
+          <div class="role-btn ortu-btn" onclick="showLoginForm('ortu')">
+            <div class="r-icon"><i class="fas fa-users"></i></div>
+            <h3>Orang Tua</h3>
+            <p>Pantau perkembangan anak</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Login Form -->
+      <div id="loginFormArea" style="display:none" class="login-form-area">
+        <div class="form-header">
+          <button class="form-back" onclick="backToRoles()"><i class="fas fa-arrow-left"></i></button>
+          <h3 id="formTitle">Login</h3>
+        </div>
+
+        <div id="ortuSelect" style="display:none">
+          <div class="fg">
+            <label>Pilih Nama Anak</label>
+            <select id="anakSelect" class=""></select>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Username</label>
+          <input type="text" id="username" placeholder="Masukkan username" onkeydown="if(event.key==='Enter')handleLogin()">
+        </div>
+        <div class="fg">
+          <label>Password</label>
+          <input type="password" id="password" placeholder="Masukkan password" onkeydown="if(event.key==='Enter')handleLogin()">
+        </div>
+        <button class="btn btn-primary btn-block btn-lg" onclick="handleLogin()">
+          <i class="fas fa-sign-in-alt"></i> Masuk
+        </button>
+        <div id="loginError" class="login-err"><i class="fas fa-times-circle"></i> Username, password, atau pilihan anak salah!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== DASHBOARD ===================== -->
+<div id="dashApp" style="display:none">
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sb-logo">
+        <div class="sb-logo-mark">م</div>
+        <div class="sb-logo-text">
+          <h3>Mahad Ilmi</h3>
+          <p>MAN 1 Kendari</p>
+        </div>
+      </div>
+      <div class="sb-user" id="sbUser"></div>
+      <nav class="sb-nav" id="sbNav"></nav>
+      <div class="sb-bottom">
+        <div class="sb-logout" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> Keluar dari Akun
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <header class="topbar">
+        <div class="tb-title">
+          <h2 id="pageTitle">Dashboard</h2>
+          <p id="pageSubtitle"></p>
+        </div>
+        <div class="tb-actions">
+          <div class="tb-search">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Cari santri..." id="globalSearch" oninput="handleGlobalSearch(this.value)">
+          </div>
+          <div class="tb-notif" onclick="showNotifications()">
+            <i class="far fa-bell"></i>
+            <span class="notif-dot" id="notifBadge">0</span>
+          </div>
+          <div class="tb-user" id="tbUser">
+            <div class="tb-ua" id="tbAva"></div>
+            <span class="tb-uname" id="tbName"></span>
+          </div>
+        </div>
+      </header>
+      <div class="content" id="contentArea"></div>
+    </main>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<!-- Toast -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ===================================================================
+// DATA STORE
+// ===================================================================
+const STORE_KEY = 'mahad_ilmi_v2';
+
+const defaultData = {
+  jenisPelanggaran: [
+    {id:'J001',nama:'Tidak hadir apel pagi',tingkat:'ringan',poin:5,sanksi:'Membersihkan masjid'},
+    {id:'J002',nama:'HP tidak dikumpulkan',tingkat:'sedang',poin:15,sanksi:'Surat peringatan'},
+    {id:'J003',nama:'Keluar asrama tanpa izin',tingkat:'berat',poin:30,sanksi:'Skorsing 1 hari'},
+    {id:'J004',nama:'Terlambat sholat berjamaah',tingkat:'ringan',poin:5,sanksi:'Hafalan tambahan'},
+    {id:'J005',nama:'Tidak mengikuti tahfidz',tingkat:'sedang',poin:10,sanksi:'Laporan musyrif'},
+    {id:'J006',nama:'Membawa HP tanpa izin',tingkat:'sedang',poin:15,sanksi:'HP disita 3 hari'},
+    {id:'J007',nama:'Berkelahi dengan santri',tingkat:'berat',poin:35,sanksi:'Panggilan orang tua'},
+    {id:'J008',nama:'Merokok di lingkungan asrama',tingkat:'berat',poin:40,sanksi:'Skorsing 3 hari'}
+  ],
+  santri: [
+    {id:'S001',nis:'20241001',nama:'Ahmad Zaki Mubarak',kelas:'XI IPA 1',kamar:'3A',asal:'Kendari',wali:'Zainudin',hafalan:18,poin:100,status:'Aktif'},
+    {id:'S002',nis:'20241002',nama:'Muhammad Raihan',kelas:'XI IPA 2',kamar:'3A',asal:'Bau-Bau',wali:'Saeful',hafalan:14,poin:95,status:'Aktif'},
+    {id:'S003',nis:'20241003',nama:'Rizky Maulana',kelas:'XII IPA 1',kamar:'1A',asal:'Kendari',wali:'Rizal',hafalan:22,poin:70,status:'Aktif'},
+    {id:'S004',nis:'20241004',nama:'Farhan Naufal',kelas:'X IPA 2',kamar:'2B',asal:'Konawe',wali:'Naufal',hafalan:12,poin:94,status:'Aktif'},
+    {id:'S005',nis:'20241005',nama:'Hafidz Rahman',kelas:'X IPS 1',kamar:'2A',asal:'Muna',wali:'Rahman',hafalan:8,poin:96,status:'Aktif'},
+    {id:'S006',nis:'20241006',nama:'Budi Santoso',kelas:'XI IPS 2',kamar:'3A',asal:'Konsel',wali:'Budi',hafalan:10,poin:82,status:'Aktif'},
+    {id:'S007',nis:'20241007',nama:'Cahya Putra',kelas:'XII IPA 2',kamar:'2A',asal:'Raha',wali:'Nugroho',hafalan:16,poin:70,status:'Aktif'},
+    {id:'S008',nis:'20241008',nama:'Dani Kurniawan',kelas:'XI IPA 1',kamar:'1A',asal:'Kolaka',wali:'Kurnia',hafalan:9,poin:88,status:'Aktif'},
+    {id:'S009',nis:'20241009',nama:'Eko Wahyudi',kelas:'X IPA 1',kamar:'2B',asal:'Buton',wali:'Wahyudi',hafalan:7,poin:79,status:'Aktif'},
+    {id:'S010',nis:'20241010',nama:'Fajar Ramadhan',kelas:'XI IPA 2',kamar:'3A',asal:'Kendari',wali:'Ramadhan',hafalan:13,poin:84,status:'Aktif'}
+  ],
+  pelanggaran: [
+    {id:'P001',tgl:'2025-03-10',santriId:'S003',nama:'Rizky Maulana',jenisId:'J001',jenis:'Tidak hadir apel pagi',tingkat:'ringan',poin:5,sanksi:'Membersihkan masjid',notif:true,status:'proses'},
+    {id:'P002',tgl:'2025-03-10',santriId:'S006',nama:'Budi Santoso',jenisId:'J002',jenis:'HP tidak dikumpulkan',tingkat:'sedang',poin:15,sanksi:'Surat peringatan',notif:true,status:'selesai'},
+    {id:'P003',tgl:'2025-03-09',santriId:'S007',nama:'Cahya Putra',jenisId:'J003',jenis:'Keluar asrama tanpa izin',tingkat:'berat',poin:30,sanksi:'Skorsing 1 hari',notif:true,status:'selesai'},
+    {id:'P004',tgl:'2025-03-09',santriId:'S008',nama:'Dani Kurniawan',jenisId:'J004',jenis:'Terlambat sholat Isya',tingkat:'ringan',poin:5,sanksi:'Hafalan tambahan',notif:true,status:'proses'},
+    {id:'P005',tgl:'2025-03-08',santriId:'S009',nama:'Eko Wahyudi',jenisId:'J005',jenis:'Tidak mengikuti tahfidz',tingkat:'sedang',poin:10,sanksi:'Laporan musyrif',notif:false,status:'selesai'}
+  ],
+  absensi: [
+    {id:'A001',tgl:'2025-03-10',santriId:'S001',nama:'Ahmad Zaki',kegiatan:'Sholat Subuh',status:'hadir',waktu:'04:20'},
+    {id:'A002',tgl:'2025-03-10',santriId:'S002',nama:'Muhammad Raihan',kegiatan:'Sholat Subuh',status:'hadir',waktu:'04:18'},
+    {id:'A003',tgl:'2025-03-10',santriId:'S003',nama:'Rizky Maulana',kegiatan:'Sholat Subuh',status:'alpha',waktu:'-'},
+    {id:'A004',tgl:'2025-03-10',santriId:'S001',nama:'Ahmad Zaki',kegiatan:'Tahfidz Pagi',status:'hadir',waktu:'05:05'},
+    {id:'A005',tgl:'2025-03-10',santriId:'S003',nama:'Rizky Maulana',kegiatan:'Tahfidz Pagi',status:'hadir',waktu:'05:10'},
+    {id:'A006',tgl:'2025-03-10',santriId:'S006',nama:'Budi Santoso',kegiatan:'Tahfidz Pagi',status:'alpha',waktu:'-'}
+  ],
+  orangTua: [
+    {id:'O001',username:'zainudin',password:'rahasia123',nama:'Zainudin',anakId:'S001',hubungan:'Ayah',noHp:'081234567890'},
+    {id:'O002',username:'saeful',password:'rahasia123',nama:'Saeful',anakId:'S002',hubungan:'Ayah',noHp:'081234567891'},
+    {id:'O003',username:'rizal',password:'rahasia123',nama:'Rizal',anakId:'S003',hubungan:'Ayah',noHp:'081234567892'},
+    {id:'O004',username:'naufal',password:'rahasia123',nama:'Naufal',anakId:'S004',hubungan:'Ayah',noHp:'081234567893'},
+    {id:'O005',username:'rahman',password:'rahasia123',nama:'Rahman',anakId:'S005',hubungan:'Ayah',noHp:'081234567894'}
+  ],
+  admin:{username:'admin',password:'admin123'},
+  statistik:{totalSantri:10,totalPelanggaran:5,poinRataRata:85.8,hadirHariIni:8}
+};
+
+let appData = (() => { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || defaultData; } catch(e){ return defaultData; }})();
+let currentUser = null;
+let currentPage = 'dashboard';
+let charts = {};
+
+function saveData() {
+  updateStats();
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(appData)); } catch(e){}
+}
+
+function updateStats() {
+  if (!appData.santri || appData.santri.length === 0) return;
+  appData.statistik = {
+    totalSantri: appData.santri.length,
+    totalPelanggaran: appData.pelanggaran.length,
+    poinRataRata: Math.round(appData.santri.reduce((a, s) => a + s.poin, 0) / appData.santri.length),
+    hadirHariIni: appData.absensi.filter(a => a.tgl === todayStr() && a.status === 'hadir').length
+  };
+}
+
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+function fmtDate(d) {
+  if (!d) return '-';
+  const dt = new Date(d + 'T00:00:00');
+  return dt.toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'});
+}
+function fmtDateTime(d, t) {
+  if (!d) return '-';
+  const dt = new Date(d + 'T' + (t || '00:00'));
+  return dt.toLocaleDateString('id-ID', {day:'numeric',month:'short'}) + ' ' + (t || '');
+}
+function poinColor(p) { return p >= 90 ? 'var(--green-600)' : p >= 75 ? 'var(--gold)' : 'var(--red-600)'; }
+function poinBadge(p) { return p >= 90 ? 'b-green' : p >= 75 ? 'b-yellow' : 'b-red'; }
+function tingkatBadge(t) { return t === 'ringan' ? 'b-green' : t === 'sedang' ? 'b-yellow' : 'b-red'; }
+
+// ===================================================================
+// TOAST
+// ===================================================================
+function toast(msg, type = 'success', dur = 3500) {
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = `toast t-${type}`;
+  const icons = {success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+  el.innerHTML = `<span class="toast-icon">${icons[type]||'✅'}</span><span class="toast-msg">${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(() => { el.style.opacity='0'; el.style.transform='translateX(110%)'; el.style.transition='all .3s'; setTimeout(() => el.remove(), 300); }, dur);
+}
+
+// ===================================================================
+// MODAL
+// ===================================================================
+function openModal(html, lg = false) {
+  const box = document.getElementById('modalBox');
+  box.className = 'modal-box' + (lg ? ' modal-lg' : '');
+  box.innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+
+// ===================================================================
+// LOGIN
+// ===================================================================
+let selectedRole = null;
+
+function showLoginForm(role) {
+  selectedRole = role;
+  document.getElementById('roleView').style.display = 'none';
+  document.getElementById('loginFormArea').style.display = 'block';
+  document.getElementById('formTitle').textContent = role === 'admin' ? '🛡️ Login Admin' : '👨‍👩‍👦 Login Orang Tua';
+  const ortuSel = document.getElementById('ortuSelect');
+  if (role === 'ortu') {
+    ortuSel.style.display = 'block';
+    const sel = document.getElementById('anakSelect');
+    sel.innerHTML = '<option value="">-- Pilih Anak --</option>';
+    appData.santri.forEach(s => {
+      const o = appData.orangTua.find(o => o.anakId === s.id);
+      if (o) {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = `${s.nama} (${s.kelas}) — Wali: ${o.nama}`;
+        sel.appendChild(opt);
+      }
+    });
+  } else {
+    ortuSel.style.display = 'none';
+  }
+  document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
+  document.getElementById('loginError').style.display = 'none';
+}
+
+function backToRoles() {
+  document.getElementById('roleView').style.display = 'block';
+  document.getElementById('loginFormArea').style.display = 'none';
+  selectedRole = null;
+}
+
+function handleLogin() {
+  const uname = document.getElementById('username').value.trim();
+  const pass = document.getElementById('password').value;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+  if (!uname || !pass) { toast('Username dan password wajib diisi!', 'warning'); return; }
+  if (selectedRole === 'admin') {
+    if (uname === appData.admin.username && pass === appData.admin.password) {
+      currentUser = {role:'admin',data:{id:'ADMIN',nama:'Administrator',username:uname}};
+      startDashboard();
+      toast('Selamat datang, Admin! 🎉', 'success');
+    } else { errEl.style.display = 'block'; }
+  } else {
+    const anakId = document.getElementById('anakSelect').value;
+    if (!anakId) { toast('Pilih anak terlebih dahulu!', 'warning'); return; }
+    const ortu = appData.orangTua.find(o => o.username === uname && o.password === pass && o.anakId === anakId);
+    if (ortu) {
+      const anak = appData.santri.find(s => s.id === anakId);
+      currentUser = {role:'ortu',data:ortu,anak};
+      startDashboard();
+      toast(`Selamat datang, ${ortu.nama}! 👋`, 'success');
+    } else { errEl.style.display = 'block'; }
+  }
+}
+
+function logout() {
+  currentUser = null;
+  Object.values(charts).forEach(c => { try { c.destroy(); } catch(e){} });
+  charts = {};
+  document.getElementById('dashApp').style.display = 'none';
+  document.getElementById('loginPage').style.display = 'flex';
+  backToRoles();
+  toast('Berhasil keluar', 'info');
+}
+
+// ===================================================================
+// DASHBOARD INIT
+// ===================================================================
+function startDashboard() {
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('dashApp').style.display = 'block';
+  renderSidebarUser();
+  renderSidebarNav();
+  updateTopbar();
+  updateNotifBadge();
+  navigateTo('dashboard');
+  setInterval(() => {
+    try { appData = JSON.parse(localStorage.getItem(STORE_KEY)) || appData; if (currentUser?.role === 'ortu') currentUser.anak = appData.santri.find(s => s.id === currentUser.data.anakId); updateNotifBadge(); } catch(e){}
+  }, 30000);
+}
+
+function renderSidebarUser() {
+  const el = document.getElementById('sbUser');
+  if (currentUser.role === 'admin') {
+    el.innerHTML = `<div class="sb-avatar admin"><i class="fas fa-user-shield"></i></div><div><div class="sb-uname">Administrator</div><div class="sb-urole">Super Admin</div></div>`;
+  } else {
+    const anak = currentUser.anak;
+    el.innerHTML = `<div class="sb-avatar ortu">${currentUser.data.nama[0]}</div><div><div class="sb-uname">${currentUser.data.nama}</div><div class="sb-urole">${currentUser.data.hubungan}</div><div class="sb-uchild">👦 ${anak.nama}</div></div>`;
+  }
+}
+
+const navDef = {
+  admin: [
+    {sec:'UTAMA', items:[
+      {ico:'fas fa-chart-pie',label:'Dashboard',page:'dashboard'},
+      {ico:'fas fa-users',label:'Data Santri',page:'santri'},
+      {ico:'fas fa-door-open',label:'Kamar Asrama',page:'kamar'}
+    ]},
+    {sec:'MANAJEMEN', items:[
+      {ico:'fas fa-calendar-check',label:'Absensi Santri',page:'absensi'},
+      {ico:'fas fa-exclamation-triangle',label:'Catat Pelanggaran',page:'pelanggaran',badge:()=>appData.pelanggaran.filter(p=>p.status==='proses').length},
+      {ico:'fas fa-list',label:'Jenis Pelanggaran',page:'jenisPelanggaran'},
+      {ico:'fas fa-trophy',label:'Ranking Santri',page:'ranking'}
+    ]},
+    {sec:'AKUN ORANG TUA', items:[
+      {ico:'fas fa-user-plus',label:'Kelola Akun Ortu',page:'akunOrtu'}
+    ]},
+    {sec:'LAPORAN', items:[
+      {ico:'fas fa-file-export',label:'Export Laporan',page:'laporan'},
+      {ico:'fas fa-chart-bar',label:'Statistik',page:'statistik'}
+    ]}
+  ],
+  ortu: [
+    {sec:'PANTAUAN ANAK', items:[
+      {ico:'fas fa-home',label:'Dashboard',page:'dashboard'},
+      {ico:'fas fa-calendar-check',label:'Absensi',page:'absensi'},
+      {ico:'fas fa-exclamation-triangle',label:'Pelanggaran',page:'pelanggaran'},
+      {ico:'fas fa-chart-line',label:'Perkembangan',page:'perkembangan'}
+    ]}
+  ]
+};
+
+function renderSidebarNav() {
+  const nav = document.getElementById('sbNav');
+  const defs = navDef[currentUser.role] || [];
+  nav.innerHTML = defs.map(sec => `
+    <div class="sb-section-label">${sec.sec}</div>
+    ${sec.items.map(item => {
+      const badgeVal = item.badge ? item.badge() : 0;
+      const badgeHtml = badgeVal > 0 ? `<span class="nav-badge">${badgeVal}</span>` : '';
+      return `<div class="nav-item${currentPage===item.page?' active':''}" onclick="navigateTo('${item.page}')">
+        <i class="${item.ico}"></i><span>${item.label}</span>${badgeHtml}</div>`;
+    }).join('')}
+  `).join('');
+}
+
+function updateTopbar() {
+  const role = currentUser.role;
+  const ava = document.getElementById('tbAva');
+  ava.className = `tb-ua ${role}`;
+  ava.textContent = role === 'admin' ? 'A' : currentUser.data.nama[0];
+  document.getElementById('tbName').textContent = role === 'admin' ? 'Admin' : currentUser.data.nama.split(' ')[0];
+}
+
+function updateNotifBadge() {
+  const badge = document.getElementById('notifBadge');
+  let count = 0;
+  if (currentUser.role === 'admin') {
+    count = appData.pelanggaran.filter(p => p.status === 'proses').length;
+  } else {
+    count = appData.pelanggaran.filter(p => p.santriId === currentUser.anak.id && p.tgl === todayStr() && p.notif).length;
+  }
+  badge.textContent = count;
+  badge.style.display = count > 0 ? 'flex' : 'none';
+}
+
+// ===================================================================
+// NAVIGATION
+// ===================================================================
+function navigateTo(page) {
+  currentPage = page;
+  renderSidebarNav();
+  const titles = {
+    dashboard: currentUser.role === 'admin' ? 'Dashboard Admin' : 'Dashboard Anak',
+    santri:'Data Santri',kamar:'Kamar Asrama',
+    absensi: currentUser.role === 'admin' ? 'Absensi Santri' : 'Absensi Anak',
+    pelanggaran: currentUser.role === 'admin' ? 'Catat Pelanggaran' : 'Pelanggaran Anak',
+    jenisPelanggaran:'Jenis Pelanggaran',ranking:'Ranking Santri',
+    laporan:'Export Laporan',statistik:'Statistik & Grafik',
+    perkembangan:'Perkembangan Anak',akunOrtu:'Kelola Akun Orang Tua'
+  };
+  document.getElementById('pageTitle').textContent = titles[page] || 'Dashboard';
+  const subs = {
+    dashboard: currentUser.role === 'admin' ? 'Ringkasan harian Mahad Ilmi' : `Memantau: ${currentUser.anak?.nama}`,
+    santri:`Total ${appData.santri.length} santri aktif`,
+    kamar:'Manajemen kamar asrama',
+    absensi:'Rekap kehadiran santri',
+    pelanggaran:currentUser.role==='admin'?'Sistem pengurangan poin otomatis':'Riwayat pelanggaran anak',
+    jenisPelanggaran:'Kelola daftar jenis pelanggaran',
+    ranking:'Peringkat santri berdasarkan poin',
+    laporan:'Export data ke PDF/Excel',
+    statistik:'Grafik & analitik data santri',
+    perkembangan:'Progress & perkembangan anak',
+    akunOrtu:'Buat & kelola akun orang tua'
+  };
+  document.getElementById('pageSubtitle').textContent = subs[page] || '';
+  Object.values(charts).forEach(c => { try { c.destroy(); } catch(e){} });
+  charts = {};
+  renderPage(page);
+}
+
+function renderPage(page) {
+  const area = document.getElementById('contentArea');
+  if (currentUser.role === 'admin') {
+    switch(page) {
+      case 'dashboard': area.innerHTML = renderAdminDashboard(); break;
+      case 'santri': area.innerHTML = renderSantri(); break;
+      case 'kamar': area.innerHTML = renderKamar(); break;
+      case 'absensi': area.innerHTML = renderAdminAbsensi(); break;
+      case 'pelanggaran': area.innerHTML = renderAdminPelanggaran(); break;
+      case 'jenisPelanggaran': area.innerHTML = renderJenisPelanggaran(); break;
+      case 'ranking': area.innerHTML = renderRanking(); break;
+      case 'laporan': area.innerHTML = renderLaporan(); break;
+      case 'statistik': area.innerHTML = renderStatistik(); setTimeout(initCharts, 100); break;
+      case 'akunOrtu': area.innerHTML = renderAkunOrtu(); break;
+      default: area.innerHTML = renderAdminDashboard();
+    }
+  } else {
+    const anak = currentUser.anak;
+    switch(page) {
+      case 'dashboard': area.innerHTML = renderOrtuDashboard(anak); setTimeout(initChartsOrtu, 100); break;
+      case 'absensi': area.innerHTML = renderOrtuAbsensi(anak); break;
+      case 'pelanggaran': area.innerHTML = renderOrtuPelanggaran(anak); break;
+      case 'perkembangan': area.innerHTML = renderOrtuPerkembangan(anak); setTimeout(initChartsOrtu, 100); break;
+      default: area.innerHTML = renderOrtuDashboard(anak);
+    }
+  }
+}
+
+// ===================================================================
+// GLOBAL SEARCH
+// ===================================================================
+function handleGlobalSearch(val) {
+  if (!val) return;
+  if (currentUser.role === 'admin') { navigateTo('santri'); setTimeout(() => { const el = document.getElementById('searchSantri'); if(el){el.value=val;filterSantri();} }, 50); }
+}
+
+// ===================================================================
+// ADMIN PAGES
+// ===================================================================
+function renderAdminDashboard() {
+  const poinRendah = appData.santri.filter(s => s.poin < 75);
+  const sorted = [...appData.santri].sort((a,b) => b.poin - a.poin);
+  const today = todayStr();
+  const absensiHariIni = appData.absensi.filter(a => a.tgl === today);
+  return `
+    ${poinRendah.length > 0 ? `<div class="alert-bar">
+      <div class="alert-ico"><i class="fas fa-exclamation"></i></div>
+      <div class="alert-body">
+        <div class="alert-title">⚠️ ${poinRendah.length} Santri Poin Rendah</div>
+        <div class="alert-desc">Segera lakukan pembinaan: ${poinRendah.map(s=>s.nama.split(' ')[0]).join(', ')}</div>
+      </div>
+      <div class="alert-act" onclick="navigateTo('ranking')">Lihat Ranking →</div>
+    </div>` : ''}
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#dcfce7;color:var(--green-700)"><i class="fas fa-users"></i></div>
+        <div class="stat-body"><div class="stat-value">${appData.statistik.totalSantri}</div><div class="stat-label">Total Santri</div><span class="stat-delta delta-up">Semua Aktif</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--red-100);color:var(--red-600)"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="stat-body"><div class="stat-value">${appData.statistik.totalPelanggaran}</div><div class="stat-label">Total Pelanggaran</div><span class="stat-delta delta-down">${appData.pelanggaran.filter(p=>p.status==='proses').length} masih proses</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#fef3c7;color:var(--amber-600)"><i class="fas fa-star"></i></div>
+        <div class="stat-body"><div class="stat-value">${appData.statistik.poinRataRata}</div><div class="stat-label">Rata-rata Poin</div><span class="stat-delta ${appData.statistik.poinRataRata >= 80 ? 'delta-up' : 'delta-down'}">${appData.statistik.poinRataRata >= 80 ? 'Baik' : 'Perlu Perhatian'}</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--blue-100);color:var(--blue-600)"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-body"><div class="stat-value">${appData.statistik.hadirHariIni}</div><div class="stat-label">Hadir Hari Ini</div><span class="stat-delta delta-neutral">kegiatan tercatat</span></div>
+      </div>
+    </div>
+
+    <div class="qa-grid">
+      <div class="qa-btn" onclick="showModalTambahSantri()"><div class="qa-icon">👦</div><div class="qa-label">Tambah Santri</div></div>
+      <div class="qa-btn" onclick="showModalPelanggaran()"><div class="qa-icon">🚨</div><div class="qa-label">Catat Pelanggaran</div></div>
+      <div class="qa-btn" onclick="showModalAbsensi()"><div class="qa-icon">📋</div><div class="qa-label">Input Absensi</div></div>
+      <div class="qa-btn" onclick="navigateTo('akunOrtu')"><div class="qa-icon">👪</div><div class="qa-label">Akun Orang Tua</div></div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">🚨 Pelanggaran Terbaru</div><div class="card-subtitle">Data terkini</div></div>
+          <span class="card-link" onclick="navigateTo('pelanggaran')">Lihat Semua →</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Tgl</th><th>Santri</th><th>Jenis</th><th>Tingkat</th><th>Poin</th></tr></thead>
+            <tbody>
+              ${appData.pelanggaran.sort((a,b)=>new Date(b.tgl)-new Date(a.tgl)).slice(0,5).map(p=>`
+                <tr>
+                  <td>${fmtDate(p.tgl)}</td>
+                  <td><div class="td-name">${p.nama}</div></td>
+                  <td>${p.jenis}</td>
+                  <td><span class="badge ${tingkatBadge(p.tingkat)}">${p.tingkat}</span></td>
+                  <td><span style="font-weight:700;color:var(--red-600)">-${p.poin}</span></td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">🏆 Ranking Santri</div><div class="card-subtitle">Top 5</div></div>
+          <span class="card-link" onclick="navigateTo('ranking')">Lihat Semua →</span>
+        </div>
+        ${sorted.slice(0,5).map((s,i)=>`
+          <div class="rank-item">
+            <div class="rank-num ${['rn-1','rn-2','rn-3','rn-other','rn-other'][i]}">${['🥇','🥈','🥉',4,5][i]}</div>
+            <div style="flex:1">
+              <div class="rank-name">${s.nama}</div>
+              <div class="rank-detail">${s.kelas} · Kamar ${s.kamar}</div>
+            </div>
+            <div class="rank-poin" style="color:${poinColor(s.poin)}">${s.poin}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">📋 Absensi Hari Ini</div><div class="card-subtitle">${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div></div>
+        <span class="card-link" onclick="navigateTo('absensi')">Input Absensi →</span>
+      </div>
+      ${absensiHariIni.length === 0 ? '<div class="empty"><i class="fas fa-calendar-times"></i><p>Belum ada absensi hari ini</p></div>' : `
+      <div class="table-wrap"><table>
+        <thead><tr><th>Nama</th><th>Kegiatan</th><th>Waktu</th><th>Status</th></tr></thead>
+        <tbody>${absensiHariIni.map(a=>`<tr>
+          <td><div class="td-name">${a.nama}</div></td>
+          <td>${a.kegiatan}</td><td>${a.waktu}</td>
+          <td><span class="badge ${a.status==='hadir'?'b-green':a.status==='izin'?'b-blue':a.status==='sakit'?'b-yellow':'b-red'}">${a.status}</span></td>
+        </tr>`).join('')}</tbody>
+      </table></div>`}
+    </div>`;
+}
+
+function renderSantri() {
+  return `
+    <div class="page-header">
+      <div class="page-title-block"><h2>👦 Data Santri</h2><p>Total ${appData.santri.length} santri aktif</p></div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm" onclick="exportSantriExcel()"><i class="fas fa-file-excel"></i> Export Excel</button>
+        <button class="btn btn-primary" onclick="showModalTambahSantri()"><i class="fas fa-plus"></i> Tambah Santri</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap">
+        <div class="inline-search">
+          <i class="fas fa-search"></i>
+          <input type="text" id="searchSantri" placeholder="Cari nama, NIS, kelas..." oninput="filterSantri()">
+        </div>
+        <select class="fg" style="margin:0;width:180px" id="filterKelas" onchange="filterSantri()">
+          <option value="">Semua Kelas</option>
+          <option value="X">Kelas X</option><option value="XI">Kelas XI</option><option value="XII">Kelas XII</option>
+        </select>
+        <select class="fg" style="margin:0;width:180px" id="filterStatus" onchange="filterSantri()">
+          <option value="">Semua Status</option>
+          <option value="baik">Poin Baik (≥90)</option>
+          <option value="cukup">Poin Cukup (75-89)</option>
+          <option value="rendah">Poin Rendah (&lt;75)</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table id="santriTable">
+          <thead><tr><th>NIS</th><th>Nama Santri</th><th>Kelas</th><th>Kamar</th><th>Hafalan</th><th>Poin</th><th>Status</th><th>Aksi</th></tr></thead>
+          <tbody>
+            ${appData.santri.map(s=>`<tr>
+              <td><code style="font-size:.8rem">${s.nis}</code></td>
+              <td><div class="td-name">${s.nama}</div><div class="td-sub">${s.asal}</div></td>
+              <td>${s.kelas}</td>
+              <td><span class="badge b-blue">Kamar ${s.kamar}</span></td>
+              <td>${s.hafalan} Juz</td>
+              <td>
+                <span style="font-weight:700;color:${poinColor(s.poin)}">${s.poin}</span>
+                <div class="poin-bar-wrap" style="width:80px"><div class="poin-bar" style="width:${s.poin}%;background:${poinColor(s.poin)}"></div></div>
+              </td>
+              <td><span class="badge b-green">${s.status}</span></td>
+              <td>
+                <div style="display:flex;gap:.375rem">
+                  <button class="btn btn-icon btn-outline btn-sm" onclick="detailSantri('${s.id}')" title="Detail"><i class="fas fa-eye"></i></button>
+                  <button class="btn btn-icon btn-outline btn-sm" onclick="showModalEditSantri('${s.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+                  <button class="btn btn-icon btn-danger btn-sm" onclick="hapusSantri('${s.id}')" title="Hapus"><i class="fas fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function renderKamar() {
+  const kamars = ['1A','1B','2A','2B','3A','3B','4A','4B'];
+  return `
+    <div class="page-header">
+      <div class="page-title-block"><h2>🏠 Kamar Asrama</h2><p>Manajemen penempatan santri</p></div>
+    </div>
+    <div class="g3" >
+      ${kamars.map(k=>{
+        const pen = appData.santri.filter(s=>s.kamar===k);
+        const kap = 4; const pct = Math.min((pen.length/kap)*100,100);
+        const bc = pen.length>=kap?'b-red':pen.length>=3?'b-yellow':'b-green';
+        const pc = pen.length>=kap?'pb-red':pen.length>=3?'pb-yellow':'pb-green';
+        return `<div class="kamar-card" onclick="detailKamar('${k}')">
+          <div class="kamar-header">
+            <div>
+              <div class="kamar-title">Kamar ${k}</div>
+              <div class="kamar-members">${pen.map(s=>s.nama.split(' ')[0]).join(', ')||'Kosong'}</div>
+            </div>
+            <span class="badge ${bc}">${pen.length}/${kap}</span>
+          </div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill ${pc}" style="width:${pct}%"></div></div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function renderAdminAbsensi() {
+  const today = todayStr();
+  const kegiatan = ['Sholat Subuh','Tahfidz Pagi','Apel Pagi','Sholat Dzuhur','Sholat Ashar','Sholat Maghrib','Sholat Isya','Belajar Malam'];
+  return `
+    <div class="page-header">
+      <div class="page-title-block"><h2>📋 Absensi Santri</h2><p>${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</p></div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm" onclick="exportAbsensiExcel()"><i class="fas fa-file-excel"></i> Export Excel</button>
+        <button class="btn btn-primary" onclick="showModalAbsensi()"><i class="fas fa-plus"></i> Input Absensi</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap">
+        <select style="padding:.6rem 1rem;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-size:.875rem;font-family:inherit;cursor:pointer" id="filterKegiatan" onchange="filterAbsensi()">
+          <option value="">Semua Kegiatan</option>
+          ${kegiatan.map(k=>`<option value="${k}">${k}</option>`).join('')}
+        </select>
+        <input type="date" style="padding:.6rem 1rem;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-size:.875rem;font-family:inherit" id="filterTanggal" value="${today}" onchange="filterAbsensi()">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Waktu</th><th>Nama Santri</th><th>Kelas</th><th>Kamar</th><th>Kegiatan</th><th>Status</th></tr></thead>
+          <tbody id="absensiTableBody">
+            ${renderAbsensiRows(today, '')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function renderAbsensiRows(tgl, kegiatan) {
+  const filtered = appData.absensi.filter(a => (!tgl || a.tgl === tgl) && (!kegiatan || a.kegiatan === kegiatan));
+  if (filtered.length === 0) return `<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray-400)">Tidak ada data absensi</td></tr>`;
+  return filtered.map(a => {
+    const s = appData.santri.find(x => x.id === a.santriId);
+    const bc = a.status==='hadir'?'b-green':a.status==='izin'?'b-blue':a.status==='sakit'?'b-yellow':'b-red';
+    return `<tr><td>${a.waktu}</td><td><div class="td-name">${a.nama}</div></td>
+      <td>${s?.kelas||'-'}</td><td>${s?'Kamar '+s.kamar:'-'}</td><td>${a.kegiatan}</td>
+      <td><span class="badge ${bc}">${a.status}</span></td></tr>`;
+  }).join('');
+}
+
+function renderAdminPelanggaran() {
+  return `
+    <div class="page-header">
+      <div class="page-title-block"><h2>🚨 Catat Pelanggaran</h2><p>Sistem pengurangan poin otomatis</p></div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm" onclick="exportPelanggaranPDF()"><i class="fas fa-file-pdf"></i> Export PDF</button>
+        <button class="btn btn-danger" onclick="showModalPelanggaran()"><i class="fas fa-plus"></i> Catat Pelanggaran</button>
+      </div>
+    </div>
+    <div class="stats-grid" style="flex-direction:column;margin-bottom:1.5rem">
+      <div class="stat-card"><div class="stat-icon" style="background:#dcfce7;color:var(--green-700)"><i class="fas fa-check-circle"></i></div><div class="stat-value">${appData.pelanggaran.filter(p=>p.tingkat==='ringan').length}</div><div class="stat-label">Pelanggaran Ringan</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:#fef3c7;color:var(--amber-600)"><i class="fas fa-exclamation-circle"></i></div><div class="stat-value">${appData.pelanggaran.filter(p=>p.tingkat==='sedang').length}</div><div class="stat-label">Pelanggaran Sedang</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--red-100);color:var(--red-600)"><i class="fas fa-times-circle"></i></div><div class="stat-value">${appData.pelanggaran.filter(p=>p.tingkat==='berat').length}</div><div class="stat-label">Pelanggaran Berat</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--blue-100);color:var(--blue-600)"><i class="fas fa-spinner"></i></div><div class="stat-value">${appData.pelanggaran.filter(p=>p.status==='proses').length}</div><div class="stat-label">Perlu Diproses</div></div>
+    </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tanggal</th><th>Santri</th><th>Jenis</th><th>Tingkat</th><th>Poin</th><th>Sanksi</th><th>Status</th><th>Aksi</th></tr></thead>
+          <tbody>
+            ${appData.pelanggaran.sort((a,b)=>new Date(b.tgl)-new Date(a.tgl)).map(p=>`<tr>
+              <td>${fmtDate(p.tgl)}</td>
+              <td><div class="td-name">${p.nama}</div></td>
+              <td>${p.jenis}</td>
+              <td><span class="badge ${tingkatBadge(p.tingkat)}">${p.tingkat}</span></td>
+              <td><span style="font-weight:700;color:var(--red-600)">-${p.poin}</span></td>
+              <td style="max-width:180px;white-space:normal">${p.sanksi}</td>
+              <td><span class="badge ${p.status==='selesai'?'b-green':'b-yellow'}">${p.status}</span></td>
+              <td>
+                <div style="display:flex;gap:.375rem">
+                  ${p.status!=='selesai'?`<button class="btn btn-sm btn-primary" onclick="prosesPelanggaran('${p.id}')"><i class="fas fa-check"></i> Proses</button>`:'<span class="badge b-green"><i class="fas fa-check-circle"></i> Selesai</span>'}
+                  <button class="btn btn-icon btn-danger btn-sm" onclick="hapusPelanggaran('${p.id}')" title="Hapus"><i class="fas fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function renderJenisPelanggaran() {
+  const maxPoin = appData.jenisPelanggaran.length ? Math.max(...appData.jenisPelanggaran.map(j=>j.poin)) : 0;
+  const minPoin = appData.jenisPelanggaran.length ? Math.min(...appData.jenisPelanggaran.map(j=>j.poin)) : 0;
+  return `
+    <div class="page-header">
+      <div class="page-title-block"><h2>📋 Jenis Pelanggaran</h2><p>Kelola referensi jenis pelanggaran & poin</p></div>
+      <button class="btn btn-primary" onclick="showModalTambahJenis()"><i class="fas fa-plus"></i> Tambah Jenis</button>
+    </div>
+    <div class="g3" style="margin-bottom:1.5rem">
+      <div class="card" style="background:var(--green-50);border-color:var(--green-200)">
+        <div style="display:flex;align-items:center;gap:1rem">
+          <div style="width:44px;height:44px;border-radius:12px;background:var(--green-600);display:flex;align-items:center;justify-content:center;color:white"><i class="fas fa-list"></i></div>
+          <div><div style="font-size:.7rem;color:var(--green-700);font-weight:700;text-transform:uppercase">Total Jenis</div><div style="font-size:2rem;font-weight:800;color:var(--green-800)">${appData.jenisPelanggaran.length}</div></div>
+        </div>
+      </div>
+      <div class="card" style="background:#fffbeb;border-color:#fde68a">
+        <div style="display:flex;align-items:center;gap:1rem">
+          <div style="width:44px;height:44px;border-radius:12px;background:var(--amber-500);display:flex;align-items:center;justify-content:center;color:white"><i class="fas fa-arrow-up"></i></div>
+          <div><div style="font-size:.7rem;color:var(--amber-600);font-weight:700;text-transform:uppercase">Poin Tertinggi</div><div style="font-size:2rem;font-weight:800;color:var(--amber-700)">${maxPoin}</div></div>
+        </div>
+      </div>
+      <div class="card" style="background:var(--blue-50);border-color:var(--blue-100)">
+        <div style="display:flex;align-items:center;gap:1rem">
+          <div style="width:44px;height:44px;border-radius:12px;background:var(--blue-600);display:flex;align-items:center;justify-content:center;color:white"><i class="fas fa-arrow-down"></i></div>
+          <div><div style="font-size:.7rem;color:var(--blue-600);font-weight:700;text-transform:uppercase">Poin Terendah</div><div style="font-size:2rem;font-weight:800;color:var(--blue-700)">${minPoin}</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>No</th><th>Nama Pelanggaran</th><th>Tingkat</th><th>Poin</th><th>Sanksi</th><th>Aksi</th></tr></thead>
+          <tbody>
+            ${appData.jenisPelanggaran.map((jp,i)=>`<tr>
+              <td>${i+1}</td>
+              <td><div class="td-name">${jp.nama}</div></td>
+              <td><span class="badge ${tingkatBadge(jp.tingkat)}">${jp.tingkat.charAt(0).toUpperCase()+jp.tingkat.slice(1)}</span></td>
+              <td><span style="font-weight:700;color:var(--red-600)">-${jp.poin} poin</span></td>
+              <td>${jp.sanksi}</td>
+              <td><div style="display:flex;gap:.375rem">
+                <button class="btn btn-sm btn-outline" onclick="showModalEditJenis('${jp.id}')"><i class="fas fa-edit"></i> Edit</button>
+                <button class="btn btn-icon btn-danger btn-sm" onclick="hapusJenis('${jp.id}')"><i class="fas fa-trash"></i></button>
+              </div></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function renderRanking() {
+  const sorted = [...appData.santri].sort((a,b)=>b.poin-a.poin);
+  const top3 = sorted.slice(0,3);
+  return `
+    <div class="page-header"><div class="page-title-block"><h2>🏆 Ranking Santri Mahad Ilmi</h2><p>Berdasarkan poin ketertiban</p></div></div>
+    <div class="podium">
+      ${[top3[1],top3[0],top3[2]].filter(Boolean).map((s,i)=>{
+        const realIdx = i===0?1:i===1?0:2;
+        return `<div class="podium-card ${realIdx===0?'p1':''}">
+          <div class="podium-medal">${['🥇','🥈','🥉'][realIdx]}</div>
+          <div class="podium-poin" style="color:${poinColor(s.poin)}">${s.poin}</div>
+          <div class="podium-name">${s.nama}</div>
+          <div class="podium-meta">${s.kelas} · ${s.hafalan} Juz</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Daftar Lengkap Ranking</div></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Rank</th><th>Nama</th><th>Kelas</th><th>Kamar</th><th>Hafalan</th><th>Poin</th><th>Kategori</th></tr></thead>
+        <tbody>
+          ${sorted.map((s,i)=>`<tr>
+            <td><span style="font-weight:800;font-size:1rem">#${i+1}</span></td>
+            <td><div class="td-name">${s.nama}</div></td>
+            <td>${s.kelas}</td><td>Kamar ${s.kamar}</td><td>${s.hafalan} Juz</td>
+            <td><span style="font-weight:800;color:${poinColor(s.poin)}">${s.poin}</span></td>
+            <td><span class="badge ${poinBadge(s.poin)}">${s.poin>=90?'Istimewa':s.poin>=75?'Baik':'Perlu Bimbingan'}</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>
+    </div>`;
+}
+
+function renderLaporan() {
+  return `
+    <div class="page-header"><div class="page-title-block"><h2>📄 Export Laporan</h2><p>Unduh data dalam format PDF atau Excel</p></div></div>
+    <div class="g3">
+      <div class="laporan-card">
+        <div class="laporan-icon" style="background:var(--red-50)"><i class="fas fa-file-pdf" style="color:var(--red-600)"></i></div>
+        <div class="laporan-card-body">
+          <h3>Laporan Pelanggaran</h3>
+          <p>Data lengkap pelanggaran santri dalam format PDF dengan tabel otomatis</p>
+          <button class="btn btn-danger" onclick="exportPelanggaranPDF()"><i class="fas fa-download"></i> Export PDF</button>
+        </div>
+      </div>
+      <div class="laporan-card">
+        <div class="laporan-icon" style="background:#f0fdf4"><i class="fas fa-file-excel" style="color:var(--green-600)"></i></div>
+        <div class="laporan-card-body">
+          <h3>Laporan Absensi</h3>
+          <p>Rekap absensi seluruh santri dalam format Excel yang dapat diedit</p>
+          <button class="btn btn-primary" onclick="exportAbsensiExcel()"><i class="fas fa-download"></i> Export Excel</button>
+        </div>
+      </div>
+      <div class="laporan-card">
+        <div class="laporan-icon" style="background:var(--blue-50)"><i class="fas fa-users" style="color:var(--blue-600)"></i></div>
+        <div class="laporan-card-body">
+          <h3>Data Santri Lengkap</h3>
+          <p>Semua data santri beserta poin dan hafalan dalam format Excel</p>
+          <button class="btn btn-gold" onclick="exportSantriExcel()"><i class="fas fa-download"></i> Export Excel</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">📊 Ringkasan Data</div></div>
+      <div style="display:flex;flex-direction:column;gap:.75rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-50);padding:1rem 1.25rem;border-radius:var(--radius-lg)">
+          <div style="font-size:.875rem;color:var(--gray-500)">Total Santri</div>
+          <div style="font-size:1.5rem;font-weight:800">${appData.santri.length}</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-50);padding:1rem 1.25rem;border-radius:var(--radius-lg)">
+          <div style="font-size:.875rem;color:var(--gray-500)">Total Pelanggaran Tercatat</div>
+          <div style="font-size:1.5rem;font-weight:800">${appData.pelanggaran.length}</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-50);padding:1rem 1.25rem;border-radius:var(--radius-lg)">
+          <div style="font-size:.875rem;color:var(--gray-500)">Total Catatan Absensi</div>
+          <div style="font-size:1.5rem;font-weight:800">${appData.absensi.length}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderStatistik() {
+  return `
+    <div class="page-header"><div class="page-title-block"><h2>📊 Statistik & Grafik</h2><p>Visualisasi data santri Mahad Ilmi</p></div></div>
+    <div class="g2">
+      <div class="card"><div class="card-header"><div class="card-title">Distribusi Poin Santri</div></div><div class="chart-wrap"><canvas id="poinChart"></canvas></div></div>
+      <div class="card"><div class="card-header"><div class="card-title">Pelanggaran per Tingkat</div></div><div class="chart-wrap"><canvas id="pelChart"></canvas></div></div>
+    </div>
+    <div class="g2">
+      <div class="card"><div class="card-header"><div class="card-title">Tren Kehadiran 7 Hari</div></div><div class="chart-wrap"><canvas id="hadirChart"></canvas></div></div>
+      <div class="card"><div class="card-header"><div class="card-title">Distribusi Hafalan</div></div><div class="chart-wrap"><canvas id="hafChart"></canvas></div></div>
+    </div>`;
+}
+
+// ===================== AKUN ORANG TUA =====================
+function renderAkunOrtu() {
+  const santriTanpaOrtu = appData.santri.filter(s => !appData.orangTua.some(o => o.anakId === s.id));
+  return `
+    <div class="page-header">
+      <div class="page-title-block"><h2>👪 Kelola Akun Orang Tua</h2><p>Buat & kelola akses login orang tua (khusus admin)</p></div>
+    </div>
+
+    <div class="g2">
+      <!-- Form Buat Akun Baru -->
+      <div>
+        <div class="akun-card" style="margin-bottom:1.25rem">
+          <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem">
+            <div style="width:42px;height:42px;border-radius:11px;background:var(--green-600);display:flex;align-items:center;justify-content:center;color:white"><i class="fas fa-user-plus"></i></div>
+            <div><div style="font-weight:700;color:var(--gray-900)">Buat Akun Baru</div><div style="font-size:.8rem;color:var(--gray-400)">Tambahkan akses untuk orang tua</div></div>
+          </div>
+          ${santriTanpaOrtu.length === 0 ? `
+            <div style="text-align:center;padding:2rem;background:var(--green-50);border-radius:var(--radius-lg);border:1px dashed var(--green-300)">
+              <i class="fas fa-check-circle" style="font-size:2rem;color:var(--green-500);margin-bottom:.75rem;display:block"></i>
+              <div style="font-weight:600;color:var(--green-700)">Semua santri sudah memiliki akun orang tua</div>
+            </div>` : `
+          <div class="fg">
+            <label>Pilih Santri</label>
+            <select id="aoSantri" onchange="autoFillOrtu()">
+              <option value="">-- Pilih Santri --</option>
+              ${santriTanpaOrtu.map(s=>`<option value="${s.id}" data-wali="${s.wali}">${s.nama} (${s.kelas})</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label>Nama Orang Tua</label><input type="text" id="aoNama" placeholder="Nama lengkap"></div>
+            <div class="fg">
+              <label>Hubungan</label>
+              <select id="aoHub"><option value="Ayah">Ayah</option><option value="Ibu">Ibu</option><option value="Wali">Wali</option></select>
+            </div>
+          </div>
+          <div class="fg"><label>No. HP</label><input type="text" id="aoHp" placeholder="08xxxxxxxxxx"></div>
+          <div class="form-row">
+            <div class="fg"><label>Username</label><input type="text" id="aoUsername" placeholder="Username login"><div class="hint">Gunakan nama panggilan</div></div>
+            <div class="fg"><label>Password</label><input type="text" id="aoPassword" value="rahasia123"><div class="hint">Default: rahasia123</div></div>
+          </div>
+          <button class="btn btn-primary btn-block" onclick="buatAkunOrtu()"><i class="fas fa-save"></i> Buat Akun Orang Tua</button>`}
+        </div>
+
+        <!-- Info Login -->
+        <div class="card" style="background:var(--blue-50);border-color:var(--blue-100)">
+          <div style="display:flex;gap:.75rem">
+            <i class="fas fa-info-circle" style="color:var(--blue-600);margin-top:.2rem"></i>
+            <div>
+              <div style="font-weight:700;color:var(--blue-700);margin-bottom:.375rem">Cara Login Orang Tua</div>
+              <div style="font-size:.8rem;color:var(--blue-600);line-height:1.6">
+                1. Pilih portal <strong>Orang Tua</strong> di halaman login<br>
+                2. Pilih nama anak dari dropdown<br>
+                3. Masukkan username & password yang diberikan admin<br>
+                4. Klik tombol Masuk
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daftar Akun -->
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">📋 Daftar Akun Orang Tua</div><div class="card-subtitle">${appData.orangTua.length} akun aktif</div></div>
+        </div>
+        ${appData.orangTua.length === 0 ? '<div class="empty"><i class="fas fa-users"></i><p>Belum ada akun orang tua</p></div>' :
+        appData.orangTua.map(o=>{
+          const anak = appData.santri.find(s=>s.id===o.anakId);
+          return `<div class="akun-list-item">
+            <div class="akun-avatar">${o.nama[0]}</div>
+            <div class="akun-info">
+              <div class="akun-name">${o.nama} <span class="badge b-gold" style="font-size:.7rem">${o.hubungan}</span></div>
+              <div class="akun-meta">
+                Anak: <strong>${anak?.nama||'(Dihapus)'}</strong> · ${anak?.kelas||''}<br>
+                Login: <span class="code-badge">${o.username}</span>
+                ${o.noHp?` · HP: ${o.noHp}`:''}
+              </div>
+            </div>
+            <div class="akun-actions">
+              <button class="btn btn-icon btn-outline btn-sm" onclick="showModalEditOrtu('${o.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-icon btn-danger btn-sm" onclick="hapusAkunOrtu('${o.id}')" title="Hapus"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+function autoFillOrtu() {
+  const sel = document.getElementById('aoSantri');
+  const opt = sel.options[sel.selectedIndex];
+  if (opt && opt.dataset.wali) {
+    document.getElementById('aoNama').value = opt.dataset.wali;
+    document.getElementById('aoUsername').value = opt.dataset.wali.toLowerCase().replace(/\s+/g,'');
+  }
+}
+
+function buatAkunOrtu() {
+  const santriId = document.getElementById('aoSantri')?.value;
+  if (!santriId) { toast('Pilih santri terlebih dahulu!', 'warning'); return; }
+  const nama = document.getElementById('aoNama')?.value?.trim();
+  const username = document.getElementById('aoUsername')?.value?.trim();
+  const password = document.getElementById('aoPassword')?.value?.trim();
+  const hub = document.getElementById('aoHub')?.value;
+  const hp = document.getElementById('aoHp')?.value?.trim();
+  if (!nama) { toast('Nama orang tua wajib diisi!', 'warning'); return; }
+  if (!username) { toast('Username wajib diisi!', 'warning'); return; }
+  if (!password) { toast('Password wajib diisi!', 'warning'); return; }
+  if (appData.orangTua.some(o=>o.username===username)) { toast('Username sudah digunakan!', 'warning'); return; }
+  if (appData.orangTua.some(o=>o.anakId===santriId)) { toast('Santri ini sudah memiliki akun orang tua!', 'warning'); return; }
+  const santri = appData.santri.find(s=>s.id===santriId);
+  appData.orangTua.push({id:'O'+Date.now(),username,password,nama,anakId:santriId,hubungan:hub,noHp:hp||''});
+  saveData();
+  navigateTo('akunOrtu');
+  toast(`Akun orang tua untuk ${santri?.nama} berhasil dibuat!`, 'success');
+}
+
+function showModalEditOrtu(id) {
+  const o = appData.orangTua.find(x=>x.id===id);
+  if (!o) return;
+  const anak = appData.santri.find(s=>s.id===o.anakId);
+  openModal(`
+    <div class="modal-head"><h3>✏️ Edit Akun Orang Tua</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+    <div style="background:var(--gray-50);padding:1rem;border-radius:var(--radius-lg);margin-bottom:1.25rem">
+      <div style="font-size:.8rem;color:var(--gray-400)">Santri</div>
+      <div style="font-weight:700">${anak?.nama||'-'} (${anak?.kelas||'-'})</div>
+    </div>
+    <div class="fg"><label>Nama Orang Tua</label><input type="text" id="eoNama" value="${o.nama}"></div>
+    <div class="fg"><label>Hubungan</label>
+      <select id="eoHub"><option value="Ayah" ${o.hubungan==='Ayah'?'selected':''}>Ayah</option><option value="Ibu" ${o.hubungan==='Ibu'?'selected':''}>Ibu</option><option value="Wali" ${o.hubungan==='Wali'?'selected':''}>Wali</option></select>
+    </div>
+    <div class="fg"><label>No. HP</label><input type="text" id="eoHp" value="${o.noHp||''}"></div>
+    <div class="fg"><label>Username</label><input type="text" id="eoUsername" value="${o.username}"></div>
+    <div class="fg"><label>Password Baru</label><input type="text" id="eoPassword" value="${o.password}"><div class="hint">Kosongkan jika tidak ingin mengubah</div></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal()">Batal</button>
+      <button class="btn btn-primary" style="flex:1" onclick="simpanEditOrtu('${id}')"><i class="fas fa-save"></i> Simpan</button>
+    </div>`);
+}
+
+function simpanEditOrtu(id) {
+  const o = appData.orangTua.find(x=>x.id===id);
+  if (!o) return;
+  const newUsername = document.getElementById('eoUsername').value.trim();
+  if (!newUsername) { toast('Username tidak boleh kosong!', 'warning'); return; }
+  if (newUsername !== o.username && appData.orangTua.some(x=>x.username===newUsername)) { toast('Username sudah digunakan!', 'warning'); return; }
+  o.nama = document.getElementById('eoNama').value.trim() || o.nama;
+  o.hubungan = document.getElementById('eoHub').value;
+  o.noHp = document.getElementById('eoHp').value.trim();
+  o.username = newUsername;
+  const newPass = document.getElementById('eoPassword').value.trim();
+  if (newPass) o.password = newPass;
+  saveData();
+  closeModal();
+  navigateTo('akunOrtu');
+  toast('Akun orang tua berhasil diperbarui!', 'success');
+}
+
+function hapusAkunOrtu(id) {
+  const o = appData.orangTua.find(x=>x.id===id);
+  if (!o) return;
+  if (confirm(`Hapus akun orang tua "${o.nama}"? Orang tua tidak bisa login setelah dihapus.`)) {
+    appData.orangTua = appData.orangTua.filter(x=>x.id!==id);
+    saveData();
+    navigateTo('akunOrtu');
+    toast('Akun orang tua berhasil dihapus', 'success');
+  }
+}
+
+// ===================== ORANG TUA PAGES =====================
+function renderOrtuDashboard(anak) {
+  const today = todayStr();
+  const absensiAnak = appData.absensi.filter(a=>a.tgl===today&&a.santriId===anak.id);
+  const hadirCount = absensiAnak.filter(a=>a.status==='hadir').length;
+  const pelAnak = appData.pelanggaran.filter(p=>p.santriId===anak.id);
+  const totalPoinHilang = pelAnak.reduce((a,p)=>a+p.poin,0);
+  return `
+    <div class="profile-hero">
+      <div class="ph-avatar">${anak.nama[0]}</div>
+      <div class="ph-info" style="position:relative;z-index:1">
+        <h1>${anak.nama}</h1>
+        <p>NIS: ${anak.nis} &middot; ${anak.kelas} &middot; Kamar ${anak.kamar} &middot; Asal: ${anak.asal}</p>
+        <div class="ph-stats">
+          <div class="ph-stat"><div class="v" style="color:${anak.poin>=90?'#4ade80':anak.poin>=75?'var(--gold-light)':'#f87171'}">${anak.poin}</div><div class="l">Poin</div></div>
+          <div class="ph-stat"><div class="v">${anak.hafalan}</div><div class="l">Juz Hafalan</div></div>
+          <div class="ph-stat"><div class="v">${pelAnak.length}</div><div class="l">Pelanggaran</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-header"><div class="card-title">📅 Status Hari Ini</div></div>
+        <div style="text-align:center;padding:1.5rem">
+          <div style="font-size:3rem;margin-bottom:.75rem;color:${hadirCount>0?'var(--green-500)':'var(--gray-300)'}">
+            <i class="fas ${hadirCount>0?'fa-check-circle':'fa-times-circle'}"></i>
+          </div>
+          <div style="font-size:1.25rem;font-weight:700;margin-bottom:.5rem">
+            ${hadirCount===0?'Belum Ada Data':'Hadir '+hadirCount+' Kegiatan'}
+          </div>
+          <p style="color:var(--gray-400);font-size:.875rem">
+            Poin saat ini: <strong style="color:${poinColor(anak.poin)}">${anak.poin}</strong> / 100
+          </p>
+          <div class="poin-bar-wrap" style="margin-top:.75rem"><div class="poin-bar" style="width:${anak.poin}%;background:${poinColor(anak.poin)}"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">📊 Kehadiran 7 Hari Terakhir</div></div>
+        <div class="chart-wrap"><canvas id="kehadiranOrtuChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">⏱️ Aktivitas Terbaru</div></div>
+      <div class="timeline">${generateTimeline(anak.id)}</div>
+    </div>`;
+}
+
+function generateTimeline(santriId) {
+  const abs = appData.absensi.filter(a=>a.santriId===santriId).map(a=>({tgl:a.tgl,waktu:a.waktu,type:'abs',title:a.kegiatan,desc:`Status: ${a.status}`,status:a.status}));
+  const pel = appData.pelanggaran.filter(p=>p.santriId===santriId).map(p=>({tgl:p.tgl,waktu:'00:00',type:'pel',title:p.jenis,desc:`Poin -${p.poin} · ${p.sanksi}`,tingkat:p.tingkat}));
+  const all = [...abs,...pel].sort((a,b)=>new Date(b.tgl+'T'+b.waktu)-new Date(a.tgl+'T'+a.waktu)).slice(0,10);
+  if (!all.length) return '<div class="empty"><i class="fas fa-history"></i><p>Belum ada aktivitas tercatat</p></div>';
+  return all.map(item=>{
+    const cls = item.type==='pel'?(item.tingkat==='berat'?'danger':item.tingkat==='sedang'?'warn':''):(item.status!=='hadir'?'warn':'');
+    return `<div class="tl-item ${cls}">
+      <div class="tl-dot"></div>
+      <div class="tl-date">${fmtDateTime(item.tgl,item.waktu)}</div>
+      <div class="tl-box"><div class="tl-title">${item.title}</div><div class="tl-desc">${item.desc}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderOrtuAbsensi(anak) {
+  const data = appData.absensi.filter(a=>a.santriId===anak.id).sort((a,b)=>new Date(b.tgl)-new Date(a.tgl));
+  const hadir = data.filter(a=>a.status==='hadir').length;
+  return `
+    <div class="stats-grid" style="margin-bottom:1.5rem">
+      <div class="stat-card"><div class="stat-icon" style="background:#dcfce7;color:var(--green-700)"><i class="fas fa-check"></i></div><div class="stat-value">${hadir}</div><div class="stat-label">Kehadiran</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--red-100);color:var(--red-600)"><i class="fas fa-times"></i></div><div class="stat-value">${data.filter(a=>a.status==='alpha').length}</div><div class="stat-label">Alpha</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--blue-100);color:var(--blue-600)"><i class="fas fa-file-alt"></i></div><div class="stat-value">${data.filter(a=>a.status==='izin').length}</div><div class="stat-label">Izin</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:#fef3c7;color:var(--amber-600)"><i class="fas fa-stethoscope"></i></div><div class="stat-value">${data.filter(a=>a.status==='sakit').length}</div><div class="stat-label">Sakit</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">📋 Riwayat Absensi ${anak.nama}</div></div>
+      ${data.length===0?'<div class="empty"><i class="fas fa-calendar"></i><p>Belum ada data absensi</p></div>':`
+      <div class="table-wrap"><table>
+        <thead><tr><th>Tanggal</th><th>Waktu</th><th>Kegiatan</th><th>Status</th></tr></thead>
+        <tbody>
+          ${data.map(a=>`<tr>
+            <td>${fmtDate(a.tgl)}</td><td>${a.waktu}</td><td>${a.kegiatan}</td>
+            <td><span class="badge ${a.status==='hadir'?'b-green':a.status==='izin'?'b-blue':a.status==='sakit'?'b-yellow':'b-red'}">${a.status}</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>`}
+    </div>`;
+}
+
+function renderOrtuPelanggaran(anak) {
+  const data = appData.pelanggaran.filter(p=>p.santriId===anak.id).sort((a,b)=>new Date(b.tgl)-new Date(a.tgl));
+  const totalPoin = data.reduce((a,p)=>a+p.poin,0);
+  return `
+    <div class="stats-grid" style="margin-bottom:1.5rem">
+      <div class="stat-card"><div class="stat-icon" style="background:var(--red-100);color:var(--red-600)"><i class="fas fa-exclamation"></i></div><div class="stat-body"><div class="stat-value">${data.length}</div><div class="stat-label">Total Pelanggaran</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--red-100);color:var(--red-600)"><i class="fas fa-minus-circle"></i></div><div class="stat-body"><div class="stat-value">-${totalPoin}</div><div class="stat-label">Total Poin Hilang</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:#dcfce7;color:var(--green-700)"><i class="fas fa-shield-alt"></i></div><div class="stat-body"><div class="stat-value">${anak.poin}</div><div class="stat-label">Poin Saat Ini</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:#fef3c7;color:var(--amber-600)"><i class="fas fa-spinner"></i></div><div class="stat-body"><div class="stat-value">${data.filter(p=>p.status==='proses').length}</div><div class="stat-label">Masih Proses</div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">🚨 Riwayat Pelanggaran ${anak.nama}</div></div>
+      ${data.length===0?'<div class="empty"><i class="fas fa-check-circle" style="color:var(--green-400)"></i><p>Alhamdulillah, belum ada pelanggaran tercatat</p></div>':`
+      <div class="table-wrap"><table>
+        <thead><tr><th>Tanggal</th><th>Jenis</th><th>Tingkat</th><th>Poin</th><th>Sanksi</th><th>Status</th></tr></thead>
+        <tbody>
+          ${data.map(p=>`<tr>
+            <td>${fmtDate(p.tgl)}</td>
+            <td><div class="td-name">${p.jenis}</div></td>
+            <td><span class="badge ${tingkatBadge(p.tingkat)}">${p.tingkat}</span></td>
+            <td><span style="font-weight:700;color:var(--red-600)">-${p.poin}</span></td>
+            <td>${p.sanksi}</td>
+            <td><span class="badge ${p.status==='selesai'?'b-green':'b-yellow'}">${p.status}</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>`}
+    </div>`;
+}
+
+function renderOrtuPerkembangan(anak) {
+  return `
+    <div class="profile-hero" style="margin-bottom:1.5rem">
+      <div class="ph-avatar">${anak.nama[0]}</div>
+      <div class="ph-info" style="position:relative;z-index:1">
+        <h1>${anak.nama}</h1>
+        <p>Perkembangan akademik & ketertiban di Mahad Ilmi</p>
+        <div class="ph-stats">
+          <div class="ph-stat"><div class="v">${anak.poin}</div><div class="l">Poin Saat Ini</div></div>
+          <div class="ph-stat"><div class="v">${anak.hafalan} Juz</div><div class="l">Hafalan Al-Qur'an</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card"><div class="card-header"><div class="card-title">📈 Progress Poin 6 Bulan</div></div><div class="chart-wrap"><canvas id="poinProgressChart"></canvas></div></div>
+      <div class="card"><div class="card-header"><div class="card-title">📊 Tren Pelanggaran</div></div><div class="chart-wrap"><canvas id="pelTrendChart"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">📋 Ringkasan Perkembangan</div></div>
+      <div class="g2">
+        <div style="background:var(--gray-50);padding:1.25rem;border-radius:var(--radius-lg)">
+          <div style="font-size:.8rem;color:var(--gray-400);margin-bottom:.5rem">Status Poin</div>
+          <div style="font-size:1.75rem;font-weight:800;color:${poinColor(anak.poin)}">${anak.poin >= 90 ? 'Istimewa ⭐' : anak.poin >= 75 ? 'Baik 👍' : 'Perlu Bimbingan ⚠️'}</div>
+        </div>
+        <div style="background:var(--gray-50);padding:1.25rem;border-radius:var(--radius-lg)">
+          <div style="font-size:.8rem;color:var(--gray-400);margin-bottom:.5rem">Hafalan Al-Qur'an</div>
+          <div style="font-size:1.75rem;font-weight:800;color:var(--gold)">${anak.hafalan} dari 30 Juz</div>
+          <div class="progress-bar-wrap" style="margin-top:.5rem"><div class="progress-bar-fill pb-green" style="width:${(anak.hafalan/30)*100}%"></div></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ===================================================================
+// CHARTS
+// ===================================================================
+function initCharts() {
+  const poinCtx = document.getElementById('poinChart')?.getContext('2d');
+  if (poinCtx) {
+    const d = [0,0,0,0];
+    appData.santri.forEach(s=>{if(s.poin>=90)d[0]++;else if(s.poin>=75)d[1]++;else if(s.poin>=60)d[2]++;else d[3]++;});
+    charts.poin = new Chart(poinCtx,{type:'doughnut',data:{labels:['Istimewa (90+)','Baik (75-89)','Cukup (60-74)','Rendah (<60)'],datasets:[{data:d,backgroundColor:['#16a34a','#f59e0b','#f97316','#ef4444'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11}}}}}});
+  }
+  const pelCtx = document.getElementById('pelChart')?.getContext('2d');
+  if (pelCtx) {
+    charts.pel = new Chart(pelCtx,{type:'bar',data:{labels:['Ringan','Sedang','Berat'],datasets:[{label:'Jumlah',data:[appData.pelanggaran.filter(p=>p.tingkat==='ringan').length,appData.pelanggaran.filter(p=>p.tingkat==='sedang').length,appData.pelanggaran.filter(p=>p.tingkat==='berat').length],backgroundColor:['#86efac','#fde68a','#fca5a5'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
+  }
+  const hadirCtx = document.getElementById('hadirChart')?.getContext('2d');
+  if (hadirCtx) {
+    charts.hadir = new Chart(hadirCtx,{type:'line',data:{labels:['Sen','Sel','Rab','Kam','Jum','Sab','Min'],datasets:[{label:'Kehadiran (%)',data:[95,92,94,97,96,88,90],borderColor:'#16a34a',backgroundColor:'rgba(22,163,74,.1)',tension:.4,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100}}}});
+  }
+  const hafCtx = document.getElementById('hafChart')?.getContext('2d');
+  if (hafCtx) {
+    const r=[0,0,0,0,0];
+    appData.santri.forEach(s=>{if(s.hafalan<=5)r[0]++;else if(s.hafalan<=10)r[1]++;else if(s.hafalan<=15)r[2]++;else if(s.hafalan<=20)r[3]++;else r[4]++;});
+    charts.haf = new Chart(hafCtx,{type:'pie',data:{labels:['1-5 Juz','6-10 Juz','11-15 Juz','16-20 Juz','21-30 Juz'],datasets:[{data:r,backgroundColor:['#fbbf24','#f59e0b','#22c55e','#3b82f6','#8b5cf6'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11}}}}}});
+  }
+}
+
+function initChartsOrtu() {
+  const anak = currentUser.anak;
+  if (!anak) return;
+  const khCtx = document.getElementById('kehadiranOrtuChart')?.getContext('2d');
+  if (khCtx) {
+    const days=[],data=[];
+    for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().split('T')[0];days.push(d.toLocaleDateString('id-ID',{weekday:'short'}));const hadir=appData.absensi.filter(a=>a.santriId===anak.id&&a.tgl===ds&&a.status==='hadir').length;data.push(Math.round((hadir/8)*100));}
+    charts.khOrtu=new Chart(khCtx,{type:'line',data:{labels:days,datasets:[{label:'Kehadiran (%)',data,borderColor:'#16a34a',backgroundColor:'rgba(22,163,74,.1)',tension:.4,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100}}}});
+  }
+  const ppCtx = document.getElementById('poinProgressChart')?.getContext('2d');
+  if (ppCtx) {
+    const months=[],pData=[];
+    for(let i=5;i>=0;i--){const d=new Date();d.setMonth(d.getMonth()-i);months.push(d.toLocaleDateString('id-ID',{month:'short'}));pData.push(Math.max(60,anak.poin-(Math.random()*8|0)));}
+    pData[pData.length-1]=anak.poin;
+    charts.pp=new Chart(ppCtx,{type:'line',data:{labels:months,datasets:[{label:'Poin',data:pData,borderColor:'#c8973a',backgroundColor:'rgba(200,151,58,.1)',tension:.4,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:50,max:100}}}});
+  }
+  const ptCtx = document.getElementById('pelTrendChart')?.getContext('2d');
+  if (ptCtx) {
+    const months=[],pData=[];
+    for(let i=5;i>=0;i--){const d=new Date();d.setMonth(d.getMonth()-i);months.push(d.toLocaleDateString('id-ID',{month:'short'}));const c=appData.pelanggaran.filter(p=>p.santriId===anak.id&&new Date(p.tgl).getMonth()===d.getMonth()).length;pData.push(c);}
+    charts.pt=new Chart(ptCtx,{type:'bar',data:{labels:months,datasets:[{label:'Pelanggaran',data:pData,backgroundColor:'#fca5a5',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
+  }
+}
+
+// ===================================================================
+// MODAL FORMS
+// ===================================================================
+function showModalTambahSantri() {
+  openModal(`
+    <div class="modal-head"><h3>👦 Tambah Santri Baru</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="fg"><label>NIS</label><input type="text" id="mNis" placeholder="20241001" required></div>
+    <div class="fg"><label>Nama Lengkap</label><input type="text" id="mNama" placeholder="Nama lengkap santri" required></div>
+    <div class="form-row">
+      <div class="fg"><label>Kelas</label>
+        <select id="mKelas">
+          <option value="X IPA 1">X IPA 1</option><option value="X IPA 2">X IPA 2</option>
+          <option value="X IPS 1">X IPS 1</option><option value="XI IPA 1">XI IPA 1</option>
+          <option value="XI IPA 2">XI IPA 2</option><option value="XI IPS 2">XI IPS 2</option>
+          <option value="XII IPA 1">XII IPA 1</option><option value="XII IPA 2">XII IPA 2</option>
+        </select>
+      </div>
+      <div class="fg"><label>Kamar</label>
+        <select id="mKamar">
+          <option value="1A">1A</option><option value="1B">1B</option><option value="2A">2A</option>
+          <option value="2B">2B</option><option value="3A">3A</option><option value="3B">3B</option>
+          <option value="4A">4A</option><option value="4B">4B</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Asal Daerah</label><input type="text" id="mAsal" placeholder="Contoh: Kendari"></div>
+      <div class="fg"><label>Nama Wali</label><input type="text" id="mWali" placeholder="Nama wali santri"></div>
+    </div>
+    <div class="fg"><label>Hafalan Awal (Juz)</label><input type="number" id="mHafalan" value="0" min="0" max="30"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal()">Batal</button>
+      <button class="btn btn-primary" style="flex:1" onclick="tambahSantri()"><i class="fas fa-save"></i> Simpan Santri</button>
+    </div>`);
+}
+
+function showModalEditSantri(id) {
+  const s = appData.santri.find(x=>x.id===id);
+  if (!s) return;
+  openModal(`
+    <div class="modal-head"><h3>✏️ Edit Santri</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="fg"><label>NIS</label><input type="text" id="mNis" value="${s.nis}"></div>
+    <div class="fg"><label>Nama Lengkap</label><input type="text" id="mNama" value="${s.nama}"></div>
+    <div class="form-row">
+      <div class="fg"><label>Kelas</label>
+        <select id="mKelas">
+          ${['X IPA 1','X IPA 2','X IPS 1','XI IPA 1','XI IPA 2','XI IPS 2','XII IPA 1','XII IPA 2'].map(k=>`<option ${s.kelas===k?'selected':''}>${k}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fg"><label>Kamar</label>
+        <select id="mKamar">
+          ${['1A','1B','2A','2B','3A','3B','4A','4B'].map(k=>`<option ${s.kamar===k?'selected':''}>${k}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Asal Daerah</label><input type="text" id="mAsal" value="${s.asal}"></div>
+      <div class="fg"><label>Nama Wali</label><input type="text" id="mWali" value="${s.wali}"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Hafalan (Juz)</label><input type="number" id="mHafalan" value="${s.hafalan}" min="0" max="30"></div>
+      <div class="fg"><label>Poin</label><input type="number" id="mPoin" value="${s.poin}" min="0" max="100"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal()">Batal</button>
+      <button class="btn btn-primary" style="flex:1" onclick="editSantri('${id}')"><i class="fas fa-save"></i> Simpan Perubahan</button>
+    </div>`);
+}
+
+function showModalPelanggaran() {
+  const jenisOpts = appData.jenisPelanggaran.map(jp=>`<option value="${jp.id}" data-tingkat="${jp.tingkat}" data-poin="${jp.poin}" data-sanksi="${jp.sanksi}">${jp.nama} (${jp.tingkat} -${jp.poin} poin)</option>`).join('');
+  openModal(`
+    <div class="modal-head"><h3>🚨 Catat Pelanggaran</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="fg"><label>Santri</label>
+      <select id="mSantriId">
+        <option value="">-- Pilih Santri --</option>
+        ${appData.santri.map(s=>`<option value="${s.id}">${s.nama} (Poin: ${s.poin})</option>`).join('')}
+      </select>
+    </div>
+    <div class="fg"><label>Jenis Pelanggaran</label>
+      <select id="mJenisId" onchange="updateFormPelanggaran()">
+        <option value="">-- Pilih Jenis --</option>
+        ${jenisOpts}
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Tingkat</label><input type="text" id="mTingkat" readonly></div>
+      <div class="fg"><label>Poin Berkurang</label><input type="text" id="mPoin" readonly></div>
+    </div>
+    <div class="fg"><label>Sanksi</label><input type="text" id="mSanksi" readonly></div>
+    <div class="fg"><label>Tanggal</label><input type="date" id="mTgl" value="${todayStr()}"></div>
+    <div class="fg"><label>Keterangan Tambahan</label><textarea id="mKet" rows="2" placeholder="Opsional..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal()">Batal</button>
+      <button class="btn btn-danger" style="flex:1" onclick="tambahPelanggaran()"><i class="fas fa-save"></i> Simpan Pelanggaran</button>
+    </div>`);
+}
+
+function showModalAbsensi() {
+  openModal(`
+    <div class="modal-head"><h3>📋 Input Absensi</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="fg"><label>Santri</label>
+      <select id="mAbsSantri">
+        <option value="">-- Pilih Santri --</option>
+        ${appData.santri.map(s=>`<option value="${s.id}">${s.nama} — Kamar ${s.kamar}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Kegiatan</label>
+        <select id="mAbsKegiatan">
+          ${['Sholat Subuh','Tahfidz Pagi','Apel Pagi','Sholat Dzuhur','Sholat Ashar','Sholat Maghrib','Sholat Isya','Belajar Malam'].map(k=>`<option>${k}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fg"><label>Status</label>
+        <select id="mAbsStatus">
+          <option value="hadir">Hadir</option>
+          <option value="alpha">Alpha</option>
+          <option value="izin">Izin</option>
+          <option value="sakit">Sakit</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Tanggal</label><input type="date" id="mAbsTgl" value="${todayStr()}"></div>
+      <div class="fg"><label>Waktu</label><input type="time" id="mAbsWaktu" value="${new Date().toTimeString().slice(0,5)}"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal()">Batal</button>
+      <button class="btn btn-primary" style="flex:1" onclick="tambahAbsensi()"><i class="fas fa-save"></i> Simpan Absensi</button>
+    </div>`);
+}
+
+function showModalTambahJenis() {
+  openModal(`
+    <div class="modal-head"><h3>➕ Tambah Jenis Pelanggaran</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="fg"><label>Nama Pelanggaran</label><input type="text" id="mJpNama" placeholder="Contoh: Membuang sampah sembarangan"></div>
+    <div class="form-row">
+      <div class="fg"><label>Tingkat</label>
+        <select id="mJpTingkat"><option value="ringan">Ringan</option><option value="sedang">Sedang</option><option value="berat">Berat</option></select>
+      </div>
+      <div class="fg"><label>Poin Dikurangi</label><input type="number" id="mJpPoin" min="1" max="100" value="5"></div>
+    </div>
+    <div class="fg"><label>Sanksi</label><input type="text" id="mJpSanksi" placeholder="Contoh: Membersihkan masjid"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal()">Batal</button>
+      <button class="btn btn-primary" style="flex:1" onclick="tambahJenis()"><i class="fas fa-save"></i> Simpan</button>
+    </div>`);
+}
+
+function showModalEditJenis(id) {
+  const jp = appData.jenisPelanggaran.find(x=>x.id===id);
+  if (!jp) return;
+  openModal(`
+    <div class="modal-head"><h3>✏️ Edit Jenis Pelanggaran</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="fg"><label>Nama Pelanggaran</label><input type="text" id="mJpNama" value="${jp.nama}"></div>
+    <div class="form-row">
+      <div class="fg"><label>Tingkat</label>
+        <select id="mJpTingkat">
+          <option value="ringan" ${jp.tingkat==='ringan'?'selected':''}>Ringan</option>
+          <option value="sedang" ${jp.tingkat==='sedang'?'selected':''}>Sedang</option>
+          <option value="berat" ${jp.tingkat==='berat'?'selected':''}>Berat</option>
+        </select>
+      </div>
+      <div class="fg"><label>Poin Dikurangi</label><input type="number" id="mJpPoin" min="1" max="100" value="${jp.poin}"></div>
+    </div>
+    <div class="fg"><label>Sanksi</label><input type="text" id="mJpSanksi" value="${jp.sanksi}"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal()">Batal</button>
+      <button class="btn btn-primary" style="flex:1" onclick="editJenis('${id}')"><i class="fas fa-save"></i> Update</button>
+    </div>`);
+}
+
+// ===================================================================
+// CRUD OPERATIONS
+// ===================================================================
+function tambahSantri() {
+  const nis = document.getElementById('mNis')?.value?.trim();
+  const nama = document.getElementById('mNama')?.value?.trim();
+  if (!nis || !nama) { toast('NIS dan nama wajib diisi!', 'warning'); return; }
+  if (appData.santri.some(s=>s.nis===nis)) { toast('NIS sudah terdaftar!', 'warning'); return; }
+  appData.santri.push({
+    id:'S'+Date.now(), nis, nama,
+    kelas:document.getElementById('mKelas')?.value||'X IPA 1',
+    kamar:document.getElementById('mKamar')?.value||'1A',
+    asal:document.getElementById('mAsal')?.value?.trim()||'-',
+    wali:document.getElementById('mWali')?.value?.trim()||'-',
+    hafalan:parseInt(document.getElementById('mHafalan')?.value||0),
+    poin:100, status:'Aktif'
+  });
+  saveData(); closeModal(); navigateTo('santri');
+  toast(`Santri ${nama} berhasil ditambahkan!`, 'success');
+}
+
+function editSantri(id) {
+  const s = appData.santri.find(x=>x.id===id);
+  if (!s) return;
+  s.nis = document.getElementById('mNis')?.value?.trim()||s.nis;
+  s.nama = document.getElementById('mNama')?.value?.trim()||s.nama;
+  s.kelas = document.getElementById('mKelas')?.value||s.kelas;
+  s.kamar = document.getElementById('mKamar')?.value||s.kamar;
+  s.asal = document.getElementById('mAsal')?.value?.trim()||s.asal;
+  s.wali = document.getElementById('mWali')?.value?.trim()||s.wali;
+  s.hafalan = parseInt(document.getElementById('mHafalan')?.value||s.hafalan);
+  s.poin = parseInt(document.getElementById('mPoin')?.value||s.poin);
+  saveData(); closeModal(); navigateTo('santri');
+  toast(`Data ${s.nama} berhasil diperbarui!`, 'success');
+}
+
+function hapusSantri(id) {
+  const s = appData.santri.find(x=>x.id===id);
+  if (!s) return;
+  if (confirm(`Hapus santri "${s.nama}"? Semua data terkait (pelanggaran, absensi) tetap tersimpan.`)) {
+    appData.santri = appData.santri.filter(x=>x.id!==id);
+    saveData(); navigateTo('santri');
+    toast(`Santri ${s.nama} berhasil dihapus`, 'success');
+  }
+}
+
+function updateFormPelanggaran() {
+  const sel = document.getElementById('mJenisId');
+  if (!sel) return;
+  const opt = sel.options[sel.selectedIndex];
+  if (opt && opt.dataset.tingkat) {
+    document.getElementById('mTingkat').value = opt.dataset.tingkat.charAt(0).toUpperCase()+opt.dataset.tingkat.slice(1);
+    document.getElementById('mPoin').value = `-${opt.dataset.poin} poin`;
+    document.getElementById('mSanksi').value = opt.dataset.sanksi;
+  }
+}
+window.updateFormPelanggaran = updateFormPelanggaran;
+
+function tambahPelanggaran() {
+  const santriId = document.getElementById('mSantriId')?.value;
+  const jenisId = document.getElementById('mJenisId')?.value;
+  const tgl = document.getElementById('mTgl')?.value;
+  if (!santriId) { toast('Pilih santri!', 'warning'); return; }
+  if (!jenisId) { toast('Pilih jenis pelanggaran!', 'warning'); return; }
+  const santri = appData.santri.find(s=>s.id===santriId);
+  const jenis = appData.jenisPelanggaran.find(j=>j.id===jenisId);
+  if (!santri || !jenis) return;
+  appData.pelanggaran.push({
+    id:'P'+Date.now(), tgl, santriId, nama:santri.nama,
+    jenisId, jenis:jenis.nama, tingkat:jenis.tingkat,
+    poin:jenis.poin, sanksi:jenis.sanksi, notif:true, status:'proses'
+  });
+  santri.poin = Math.max(0, santri.poin - jenis.poin);
+  saveData(); closeModal(); navigateTo('pelanggaran');
+  toast(`Pelanggaran ${santri.nama} dicatat, poin -${jenis.poin}`, 'warning');
+  if (santri.poin < 75) setTimeout(()=>toast(`⚠️ Poin ${santri.nama} sekarang ${santri.poin}!`, 'error'), 500);
+}
+
+function prosesPelanggaran(id) {
+  const p = appData.pelanggaran.find(x=>x.id===id);
+  if (p) { p.status='selesai'; saveData(); navigateTo('pelanggaran'); toast('Pelanggaran ditandai selesai', 'success'); }
+}
+
+function hapusPelanggaran(id) {
+  if (confirm('Hapus catatan pelanggaran ini?')) {
+    appData.pelanggaran = appData.pelanggaran.filter(x=>x.id!==id);
+    saveData(); navigateTo('pelanggaran');
+    toast('Pelanggaran dihapus', 'success');
+  }
+}
+
+function tambahAbsensi() {
+  const santriId = document.getElementById('mAbsSantri')?.value;
+  if (!santriId) { toast('Pilih santri!', 'warning'); return; }
+  const santri = appData.santri.find(s=>s.id===santriId);
+  if (!santri) return;
+  appData.absensi.push({
+    id:'A'+Date.now(),
+    tgl:document.getElementById('mAbsTgl')?.value||todayStr(),
+    santriId, nama:santri.nama,
+    kegiatan:document.getElementById('mAbsKegiatan')?.value||'Sholat Subuh',
+    status:document.getElementById('mAbsStatus')?.value||'hadir',
+    waktu:document.getElementById('mAbsWaktu')?.value||'00:00'
+  });
+  saveData(); closeModal(); navigateTo('absensi');
+  toast(`Absensi ${santri.nama} berhasil disimpan!`, 'success');
+}
+
+function tambahJenis() {
+  const nama = document.getElementById('mJpNama')?.value?.trim();
+  if (!nama) { toast('Nama pelanggaran wajib diisi!', 'warning'); return; }
+  appData.jenisPelanggaran.push({
+    id:'J'+Date.now(), nama,
+    tingkat:document.getElementById('mJpTingkat')?.value||'ringan',
+    poin:parseInt(document.getElementById('mJpPoin')?.value||5),
+    sanksi:document.getElementById('mJpSanksi')?.value?.trim()||'-'
+  });
+  saveData(); closeModal(); navigateTo('jenisPelanggaran');
+  toast(`Jenis pelanggaran "${nama}" ditambahkan!`, 'success');
+}
+
+function editJenis(id) {
+  const jp = appData.jenisPelanggaran.find(x=>x.id===id);
+  if (!jp) return;
+  jp.nama = document.getElementById('mJpNama')?.value?.trim()||jp.nama;
+  jp.tingkat = document.getElementById('mJpTingkat')?.value||jp.tingkat;
+  jp.poin = parseInt(document.getElementById('mJpPoin')?.value||jp.poin);
+  jp.sanksi = document.getElementById('mJpSanksi')?.value?.trim()||jp.sanksi;
+  saveData(); closeModal(); navigateTo('jenisPelanggaran');
+  toast('Jenis pelanggaran diperbarui!', 'success');
+}
+
+function hapusJenis(id) {
+  const inUse = appData.pelanggaran.some(p=>p.jenisId===id);
+  const msg = inUse ? 'Jenis ini sudah dipakai di beberapa pelanggaran. Yakin ingin menghapus?' : 'Hapus jenis pelanggaran ini?';
+  if (confirm(msg)) {
+    appData.jenisPelanggaran = appData.jenisPelanggaran.filter(x=>x.id!==id);
+    saveData(); navigateTo('jenisPelanggaran');
+    toast('Jenis pelanggaran dihapus', 'success');
+  }
+}
+
+// ===================================================================
+// FILTER
+// ===================================================================
+function filterSantri() {
+  const search = (document.getElementById('searchSantri')?.value||'').toLowerCase();
+  const kelas = document.getElementById('filterKelas')?.value||'';
+  const status = document.getElementById('filterStatus')?.value||'';
+  const rows = document.querySelectorAll('#santriTable tbody tr');
+  rows.forEach(row => {
+    const text = row.innerText.toLowerCase();
+    const kelasCell = row.cells[2]?.innerText||'';
+    const poinCell = parseInt(row.cells[5]?.innerText)||100;
+    const matchSearch = !search || text.includes(search);
+    const matchKelas = !kelas || kelasCell.includes(kelas);
+    let matchStatus = true;
+    if (status==='baik') matchStatus = poinCell>=90;
+    else if (status==='cukup') matchStatus = poinCell>=75&&poinCell<90;
+    else if (status==='rendah') matchStatus = poinCell<75;
+    row.style.display = matchSearch&&matchKelas&&matchStatus ? '' : 'none';
+  });
+}
+
+function filterAbsensi() {
+  const kegiatan = document.getElementById('filterKegiatan')?.value||'';
+  const tgl = document.getElementById('filterTanggal')?.value||'';
+  const tbody = document.getElementById('absensiTableBody');
+  if (tbody) tbody.innerHTML = renderAbsensiRows(tgl, kegiatan);
+}
+
+// ===================================================================
+// DETAIL MODALS
+// ===================================================================
+function detailSantri(id) {
+  const s = appData.santri.find(x=>x.id===id);
+  if (!s) return;
+  const pel = appData.pelanggaran.filter(p=>p.santriId===id);
+  const abs = appData.absensi.filter(a=>a.santriId===id);
+  openModal(`
+    <div class="modal-head"><h3>📋 Detail Santri</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+    <div style="background:linear-gradient(135deg,var(--green-700),var(--green-950));color:white;padding:1.5rem;border-radius:var(--radius-lg);margin-bottom:1.25rem">
+      <div style="display:flex;align-items:center;gap:1rem">
+        <div style="width:56px;height:56px;background:var(--gold);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:var(--green-950)">${s.nama[0]}</div>
+        <div>
+          <h3 style="font-size:1.25rem;font-weight:800">${s.nama}</h3>
+          <p style="opacity:.85;font-size:.875rem">NIS: ${s.nis} &middot; ${s.kelas} &middot; Kamar ${s.kamar}</p>
+          <p style="opacity:.7;font-size:.8rem">Asal: ${s.asal} &middot; Wali: ${s.wali}</p>
+        </div>
+      </div>
+    </div>
+    <div class="g2">
+      <div style="background:var(--gray-50);padding:1.125rem;border-radius:var(--radius-lg);text-align:center">
+        <div style="font-size:.75rem;color:var(--gray-400)">Poin Saat Ini</div>
+        <div style="font-size:2.25rem;font-weight:800;color:${poinColor(s.poin)}">${s.poin}</div>
+        <div class="poin-bar-wrap"><div class="poin-bar" style="width:${s.poin}%;background:${poinColor(s.poin)}"></div></div>
+      </div>
+      <div style="background:var(--gray-50);padding:1.125rem;border-radius:var(--radius-lg);text-align:center">
+        <div style="font-size:.75rem;color:var(--gray-400)">Hafalan Al-Qur'an</div>
+        <div style="font-size:2.25rem;font-weight:800;color:var(--gold)">${s.hafalan}</div>
+        <div style="font-size:.8rem;color:var(--gray-400)">Juz dari 30</div>
+      </div>
+    </div>
+    <div style="margin-bottom:1rem">
+      <h4 style="font-weight:700;margin-bottom:.625rem;font-size:.9rem">Riwayat Pelanggaran (${pel.length})</h4>
+      ${pel.length?pel.map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.625rem .875rem;background:var(--gray-50);border-radius:var(--radius-sm);margin-bottom:.375rem">
+        <div><div style="font-weight:600;font-size:.875rem">${p.jenis}</div><div style="font-size:.75rem;color:var(--gray-400)">${fmtDate(p.tgl)} &middot; ${p.sanksi}</div></div>
+        <span class="badge ${tingkatBadge(p.tingkat)}">-${p.poin}</span>
+      </div>`).join(''):'<p style="color:var(--gray-400);font-size:.875rem">Alhamdulillah, belum ada pelanggaran</p>'}
+    </div>
+    <button class="btn btn-outline btn-block" onclick="closeModal()">Tutup</button>`, true);
+}
+
+function detailKamar(kamar) {
+  const pen = appData.santri.filter(s=>s.kamar===kamar);
+  const kap = 4;
+  openModal(`
+    <div class="modal-head"><h3>🏠 Kamar ${kamar}</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+    <div style="background:var(--gray-50);padding:1rem;border-radius:var(--radius-lg);margin-bottom:1.25rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+        <span style="font-size:.875rem;font-weight:600">Kapasitas: ${kap} santri</span>
+        <span class="badge ${pen.length>=kap?'b-red':pen.length>=3?'b-yellow':'b-green'}">Terisi ${pen.length}/${kap}</span>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill ${pen.length>=kap?'pb-red':pen.length>=3?'pb-yellow':'pb-green'}" style="width:${Math.min((pen.length/kap)*100,100)}%"></div></div>
+    </div>
+    <h4 style="font-weight:700;margin-bottom:.75rem">Penghuni Kamar</h4>
+    ${pen.length?pen.map(s=>`<div style="display:flex;align-items:center;gap:.875rem;padding:.75rem;background:var(--gray-50);border-radius:var(--radius-lg);margin-bottom:.5rem">
+      <div style="width:38px;height:38px;background:linear-gradient(135deg,var(--green-500),var(--green-700));border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700">${s.nama[0]}</div>
+      <div style="flex:1"><div style="font-weight:600">${s.nama}</div><div style="font-size:.75rem;color:var(--gray-400)">${s.kelas} &middot; ${s.hafalan} Juz</div></div>
+      <span style="font-weight:700;color:${poinColor(s.poin)}">${s.poin}</span>
+    </div>`).join(''):'<p style="color:var(--gray-400)">Kamar kosong</p>'}
+    <button class="btn btn-outline btn-block" style="margin-top:1rem" onclick="closeModal()">Tutup</button>`);
+}
+
+// ===================================================================
+// NOTIFICATIONS
+// ===================================================================
+function showNotifications() {
+  let html = '';
+  if (currentUser.role === 'admin') {
+    const proses = appData.pelanggaran.filter(p=>p.status==='proses');
+    const rendah = appData.santri.filter(s=>s.poin<75);
+    html = `
+      <div class="modal-head"><h3>🔔 Notifikasi Admin</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+      <div style="margin-bottom:1.25rem">
+        <div style="font-weight:700;margin-bottom:.625rem;color:var(--red-600)">⚠️ Santri Poin Rendah (${rendah.length})</div>
+        ${rendah.length?rendah.map(s=>`<div style="background:var(--red-50);padding:.75rem;border-radius:var(--radius);margin-bottom:.375rem;border-left:3px solid var(--red-500)">
+          <div style="font-weight:600">${s.nama}</div><div style="font-size:.8rem;color:var(--red-600)">Poin: ${s.poin} — ${s.kelas}</div>
+        </div>`).join(''):'<p style="color:var(--gray-400);font-size:.875rem">Tidak ada santri poin rendah</p>'}
+      </div>
+      <div>
+        <div style="font-weight:700;margin-bottom:.625rem;color:var(--amber-600)">🚨 Pelanggaran Perlu Diproses (${proses.length})</div>
+        ${proses.length?proses.map(p=>`<div style="background:var(--amber-50);padding:.75rem;border-radius:var(--radius);margin-bottom:.375rem;border-left:3px solid var(--amber-500)">
+          <div style="font-weight:600">${p.nama}</div><div style="font-size:.8rem;color:var(--amber-600)">${p.jenis} · -${p.poin} poin · ${fmtDate(p.tgl)}</div>
+        </div>`).join(''):'<p style="color:var(--gray-400);font-size:.875rem">Tidak ada pelanggaran perlu diproses</p>'}
+      </div>`;
+  } else {
+    const anak = currentUser.anak;
+    const today = todayStr();
+    const pelBaru = appData.pelanggaran.filter(p=>p.santriId===anak.id&&p.tgl===today);
+    html = `
+      <div class="modal-head"><h3>🔔 Notifikasi</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+      <div style="margin-bottom:1.25rem">
+        <div style="font-weight:700;margin-bottom:.625rem">Notifikasi Hari Ini</div>
+        ${pelBaru.length?pelBaru.map(p=>`<div style="background:var(--red-50);padding:1rem;border-radius:var(--radius-lg);margin-bottom:.5rem;border-left:3px solid var(--red-500)">
+          <div style="font-weight:700">⚠️ Pelanggaran Baru</div>
+          <div style="font-size:.875rem;margin-top:.25rem">${p.jenis} · -${p.poin} poin</div>
+          <div style="font-size:.75rem;color:var(--gray-400)">${p.sanksi}</div>
+        </div>`).join(''):'<div style="background:var(--green-50);padding:1rem;border-radius:var(--radius-lg);text-align:center"><i class="fas fa-check-circle" style="color:var(--green-500);font-size:1.5rem;margin-bottom:.5rem;display:block"></i><div style="font-weight:600;color:var(--green-700)">Alhamdulillah, tidak ada pelanggaran hari ini!</div></div>'}
+      </div>
+      <div style="background:var(--gray-50);padding:1rem;border-radius:var(--radius-lg)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:.875rem">Poin ${anak.nama}</span>
+          <span style="font-weight:800;font-size:1.25rem;color:${poinColor(anak.poin)}">${anak.poin}</span>
+        </div>
+        <div class="poin-bar-wrap" style="margin-top:.5rem"><div class="poin-bar" style="width:${anak.poin}%;background:${poinColor(anak.poin)}"></div></div>
+      </div>`;
+  }
+  openModal(html);
+}
+
+// ===================================================================
+// EXPORT
+// ===================================================================
+function exportPelanggaranPDF() {
+  try {
+    const {jsPDF} = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(16);
+    doc.text('Laporan Pelanggaran Mahad Ilmi', 14, 20);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(10);
+    doc.text(`MAN 1 Kendari | Tanggal: ${new Date().toLocaleDateString('id-ID')}`, 14, 28);
+    doc.autoTable({
+      head:[['No','Tanggal','Santri','Jenis','Tingkat','Poin','Status']],
+      body:appData.pelanggaran.map((p,i)=>[i+1,fmtDate(p.tgl),p.nama,p.jenis,p.tingkat,`-${p.poin}`,p.status]),
+      startY:36, theme:'striped',
+      headStyles:{fillColor:[22,163,74],fontSize:9},
+      bodyStyles:{fontSize:9}
+    });
+    doc.save('laporan_pelanggaran_mahad_ilmi.pdf');
+    toast('Laporan PDF berhasil diunduh!', 'success');
+  } catch(e) { toast('Gagal export PDF: ' + e.message, 'error'); }
+}
+
+function exportAbsensiExcel() {
+  try {
+    const wb = XLSX.utils.book_new();
+    const data = appData.absensi.map(a=>({'Tanggal':a.tgl,'Nama Santri':a.nama,'Kegiatan':a.kegiatan,'Status':a.status,'Waktu':a.waktu}));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), 'Absensi');
+    XLSX.writeFile(wb, 'laporan_absensi_mahad_ilmi.xlsx');
+    toast('File Excel absensi berhasil diunduh!', 'success');
+  } catch(e) { toast('Gagal export Excel: ' + e.message, 'error'); }
+}
+
+function exportSantriExcel() {
+  try {
+    const wb = XLSX.utils.book_new();
+    const data = appData.santri.map(s=>({'NIS':s.nis,'Nama':s.nama,'Kelas':s.kelas,'Kamar':'Kamar '+s.kamar,'Asal Daerah':s.asal,'Nama Wali':s.wali,'Hafalan (Juz)':s.hafalan,'Poin':s.poin,'Status':s.status}));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), 'Data Santri');
+    XLSX.writeFile(wb, 'data_santri_mahad_ilmi.xlsx');
+    toast('File Excel santri berhasil diunduh!', 'success');
+  } catch(e) { toast('Gagal export Excel: ' + e.message, 'error'); }
+}
+
+// ===================================================================
+// GLOBAL EXPOSE
+// ===================================================================
+const expose = {
+  showLoginForm,backToRoles,handleLogin,logout,navigateTo,
+  closeModal,showNotifications,filterSantri,filterAbsensi,
+  showModalTambahSantri,showModalEditSantri,showModalPelanggaran,
+  showModalAbsensi,showModalTambahJenis,showModalEditJenis,
+  tambahSantri,editSantri,hapusSantri,
+  tambahPelanggaran,prosesPelanggaran,hapusPelanggaran,
+  tambahAbsensi,tambahJenis,editJenis,hapusJenis,
+  detailSantri,detailKamar,updateFormPelanggaran,
+  buatAkunOrtu,hapusAkunOrtu,showModalEditOrtu,simpanEditOrtu,autoFillOrtu,
+  exportPelanggaranPDF,exportAbsensiExcel,exportSantriExcel
+};
+Object.assign(window, expose);
+
+// ===================================================================
+// INIT
+// ===================================================================
+updateStats();
+saveData();
+</script>
+</body>
+</html>
